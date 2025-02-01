@@ -1,14 +1,15 @@
 ---
 interface Props {
-	date: Date;
+	date: string;
 }
 
 const { date } = Astro.props;
+const parsedDate = new Date(date); // Convert string to Date
 ---
 
-<time datetime={date.toISOString()}>
+<time datetime={parsedDate.toISOString()}>
 	{
-		date.toLocaleDateString('en-us', {
+		parsedDate.toLocaleDateString('en-us', {
 			year: 'numeric',
 			month: 'short',
 			day: 'numeric',

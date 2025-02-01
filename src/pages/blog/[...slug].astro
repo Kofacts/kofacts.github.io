@@ -1,21 +1,40 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
-import { render } from 'astro:content';
+import { slugify } from '../../utils/slugify';
+import { parseStringPromise } from 'xml2js';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
+	// ✅ Move rssUrl inside the function
+	const rssUrl = 'https://obodugo.substack.com/feed';
+	const response = await fetch(rssUrl);
+	const xml = await response.text();
+	const json = await parseStringPromise(xml);
+
+	const posts = json.rss.channel[0].item.map((item) => ({
+		title: item.title[0],
+		link: item.link[0],
+		date: item.pubDate[0],
+		pubDate: item.pubDate[0],
+		content: item['content:encoded'] ? item['content:encoded'][0] : '',
+		description: item.description ? item.description[0] : '',
+		slug: slugify(item.title[0]), // ✅ Convert title to slug
+	}));
+
 	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
+		params: { slug: post.slug },
+		props: post, // ✅ Pass post data
 	}));
 }
-type Props = CollectionEntry<'blog'>;
 
+// ✅ Astro.props to get post data
 const post = Astro.props;
-const { Content } = await render(post);
 ---
 
-<BlogPost {...post.data}>
-	<Content />
+<BlogPost {...post}>
+	<div class="post-content" set:html={post.content}></div>
+
+	<!-- 🔹 Include "Read More" link to the original Substack post -->
+	<a href={post.link} target="_blank" rel="noopener noreferrer">
+		Read more on Substack
+	</a>
 </BlogPost>
