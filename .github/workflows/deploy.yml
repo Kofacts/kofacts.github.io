@@ -3,7 +3,8 @@ name: Deploy Astro to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change this if your main branch is different
+      - main # Change this if your default branch is different
+  workflow_dispatch: # Allows manual trigger from GitHub Actions
 
 permissions:
   contents: read
@@ -11,29 +12,39 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: npm
 
-      - name: Install dependencies
-        run: npm ci --include=optional  # Ensures all packages like sharp are installed
+      - name: 📦 Install dependencies
+        run: npm install
 
-      - name: Build site
+      - name: 🔨 Build Astro site
         run: npm run build
 
-      - name: Upload artifact
+      - name: 📤 Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          name: github-pages
+          path: dist/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 📥 Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
           path: dist
 
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v2
+      - name: 🚀 Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
