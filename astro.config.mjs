@@ -8,4 +8,5 @@ export default defineConfig({
 	site: 'https://kofacts.github.io/',
 	integrations: [mdx(), sitemap()],
 	output: 'static',
+	outDir: 'docs',
 });
