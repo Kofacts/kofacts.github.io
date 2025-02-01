@@ -7,4 +7,5 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
 	site: 'https://kofacts.github.io/',
 	integrations: [mdx(), sitemap()],
+	output: 'static',
 });
