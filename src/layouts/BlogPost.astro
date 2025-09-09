@@ -12,6 +12,10 @@ export interface Props {
 
 const { title, date, link, content, description } = Astro.props;
 
+const ogSlug = title.toLowerCase()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-|-$/g, '');
+
 // Format date simply
 const formatDate = (dateStr: string) => {
     try {
@@ -42,13 +46,6 @@ const getReadingTime = (content: string) => {
 <head>
     <BaseHead title={`${title} · obodugo rapheal`} description={description || title} />
 
-	<!-- Add OG image meta tag -->
-    <meta property="og:image" content={`/og/${ogSlug}.png`} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:image" content={`/og/${ogSlug}.png`} />
-	
     <style is:global>
         /* Reset everything aggressively */
         * {
