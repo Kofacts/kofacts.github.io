@@ -1,7 +1,9 @@
-// src/pages/og/[slug].png.js
 import satori from 'satori';
+export { renderers } from '../../renderers.mjs';
 
-export async function GET({ params }) {
+// src/pages/og/[slug].png.js
+
+async function GET({ params }) {
   const title = params.slug.replace(/-/g, ' ');
   
   const svg = await satori(
@@ -45,3 +47,12 @@ export async function GET({ params }) {
     headers: { 'Content-Type': 'image/svg+xml' },
   });
 }
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  GET
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };
