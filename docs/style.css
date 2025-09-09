@@ -541,7 +541,7 @@
                 padding: 30px 15px !important;
             }
         }
-		        .site-header, .site-footer, nav:not(.footer-nav) {
+		        .site-header, .site-footer {
 			display: none !important;
 		}
 
@@ -813,3 +813,34 @@
             width: 100% !important;
             min-height: 100vh !important;
         }
+		@media (max-width: 480px) {
+    body {
+        padding: 30px 15px !important;
+    }
+}
+@media (max-width: 480px) {
+    body {
+        padding: 30px 15px !important;
+    }
+    
+    .header {
+        margin-bottom: 40px !important; /* Add space after header */
+    }
+    
+    .nav {
+        gap: 15px;
+        margin-bottom: 40px !important; /* Space after navigation */
+    }
+    
+    .reading-section {
+        margin-bottom: 40px !important; /* Space after reading section */
+    }
+    
+    .section {
+        margin-bottom: 40px !important; /* Space after writing section */
+    }
+    
+    .footer {
+        margin-top: 60px !important; /* Space before footer */
+    }
+}
