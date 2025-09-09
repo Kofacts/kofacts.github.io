@@ -1,11 +1,9 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import { getCollection } from 'astro:content';
-import FormattedDate from '../components/FormattedDate.astro';
 import { slugify } from '../utils/slugify';
+import reading from '../../reading.json';
+
 
 import { parseStringPromise } from 'xml2js';
 
@@ -15,13 +13,22 @@ const response = await fetch(rssUrl);
 const xml = await response.text();
 const json = await parseStringPromise(xml);
 
-const posts = json.rss.channel[0].item.map((item) => ({
+const posts = json.rss.channel[0].item.slice(0, 5).map((item) => ({
   title: item.title[0],
   link: item.link[0],
   date: item.pubDate[0],
   slug: slugify(item.title[0]),
   description: item.description ? item.description[0] : '',
 }));
+
+// Format date simply
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long' 
+  }).toLowerCase();
+};
 ---
 
 <!doctype html>
@@ -29,97 +36,732 @@ const posts = json.rss.channel[0].item.map((item) => ({
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
+			* {
 				margin: 0;
 				padding: 0;
+				box-sizing: border-box;
 			}
-			ul li {
-				width: calc(50% - 1rem);
+
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+				line-height: 1.6;
+				color: #333;
+				background: #fff;
+				padding: 40px 20px !important;
+				max-width: 600px;
+				margin: 0 auto !important;
 			}
-			ul li * {
+
+			.header {
+				margin-bottom: 60px;
+			}
+
+			h1 {
+				font-size: 24px;
+				font-weight: 400;
+				margin-bottom: 8px;
+				letter-spacing: -0.02em;
+				cursor: pointer;
+				transition: all 0.3s ease;
+			}
+
+			h1:hover {
+				letter-spacing: 2px;
+			}
+
+			.subtitle {
+				color: #666;
+				font-size: 14px;
+				margin-bottom: 30px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+			}
+
+			.subtitle:hover {
+				color: #333;
+			}
+
+			.bio {
+				font-size: 15px;
+				color: #555;
+				margin-bottom: 40px;
+				line-height: 1.5;
+				cursor: pointer;
+				transition: all 0.3s ease;
+			}
+
+			.bio:hover {
+				font-style: italic;
+			}
+
+			.nav {
+				display: flex;
+				gap: 30px;
+				margin-bottom: 80px;
+				flex-wrap: wrap;
+			}
+
+			.nav a {
+				color: #333;
 				text-decoration: none;
-				transition: 0.2s ease;
+				font-size: 13px;
+				text-transform: lowercase;
+				font-variant: small-caps;
+				letter-spacing: 0.5px;
+				transition: color 0.2s ease;
+				position: relative;
 			}
-			ul li:first-child {
+
+			.nav a:hover {
+				color: #000;
+			}
+
+			.nav a:hover:after {
+				content: '';
+				position: absolute;
+				bottom: -2px;
+				left: 0;
+				right: 0;
+				height: 1px;
+				background: #000;
+				animation: underline 0.3s ease;
+			}
+
+			@keyframes underline {
+				from { transform: scaleX(0); }
+				to { transform: scaleX(1); }
+			}
+
+			.reading-section {
+				margin-bottom: 60px;
+				position: relative;
+			}
+
+			.reading-header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 20px;
+			}
+
+			.reading-title {
+				font-size: 16px;
+				font-weight: 500;
+				color: #222;
+				cursor: pointer;
+				transition: all 0.3s ease;
+			}
+
+			.reading-title:hover {
+				transform: rotate(-1deg);
+			}
+
+			.reading-status {
+				font-size: 12px;
+				color: #999;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+				cursor: pointer;
+				transition: color 0.2s ease;
+			}
+
+			.reading-status:hover {
+				color: #666;
+			}
+
+			.book-container {
+				position: relative;
+				padding: 20px;
+				background: #fafafa;
+				border-radius: 8px;
+				border: 1px solid #f0f0f0;
+				transition: all 0.3s ease;
+				cursor: pointer;
+				overflow: hidden;
+			}
+
+			.book-container:hover {
+				background: #f5f5f5;
+				transform: translateY(-2px);
+				box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+			}
+
+			.book-info {
+				display: flex;
+				gap: 15px;
+				align-items: flex-start;
+			}
+
+			.book-cover {
+				width: 60px;
+				height: 90px;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				border-radius: 4px;
+				position: relative;
+				flex-shrink: 0;
+				transition: all 0.3s ease;
+				cursor: pointer;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+			}
+
+			.book-cover:hover {
+				transform: rotateY(15deg) rotateX(5deg);
+				box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+			}
+
+			.book-cover:before {
+				content: '';
+				position: absolute;
+				top: 4px;
+				left: 4px;
+				right: 4px;
+				bottom: 4px;
+				border: 1px solid rgba(255,255,255,0.2);
+				border-radius: 2px;
+			}
+
+			.book-details {
+				flex: 1;
+				min-width: 0;
+			}
+
+			.book-title {
+				font-size: 15px;
+				font-weight: 500;
+				margin-bottom: 4px;
+				color: #333;
+				cursor: pointer;
+				transition: color 0.2s ease;
+			}
+
+			.book-title:hover {
+				color: #000;
+			}
+
+			.book-author {
+				font-size: 13px;
+				color: #666;
+				margin-bottom: 8px;
+				cursor: pointer;
+				transition: all 0.2s ease;
+			}
+
+			.book-author:hover {
+				color: #333;
+				font-style: italic;
+			}
+
+			.reading-progress {
+				margin-top: 12px;
+			}
+
+			.progress-bar {
 				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
+				height: 4px;
+				background: #eee;
+				border-radius: 2px;
+				overflow: hidden;
+				margin-bottom: 6px;
+				cursor: pointer;
 			}
-			ul li:first-child img {
-				width: 100%;
+
+			.progress-fill {
+				height: 100%;
+				background: linear-gradient(90deg, #667eea, #764ba2);
+				width: 34%;
+				transition: width 0.3s ease;
+				border-radius: 2px;
 			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
+
+			.progress-text {
+				font-size: 12px;
+				color: #999;
+				display: flex;
+				justify-content: space-between;
+				cursor: pointer;
 			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
+
+			.progress-text:hover {
+				color: #666;
 			}
-			ul li a {
+
+			.reading-note {
+				margin-top: 12px;
+				font-size: 13px;
+				color: #666;
+				font-style: italic;
+				opacity: 0;
+				transform: translateY(10px);
+				transition: all 0.3s ease;
+				cursor: pointer;
+			}
+
+			.book-container:hover .reading-note {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			.reading-note:hover {
+				color: #333;
+			}
+
+			.bookmark {
+				position: absolute;
+				top: 0;
+				right: 20px;
+				width: 2px;
+				height: 30px;
+				background: #ff6b6b;
+				transform: translateY(-10px);
+				transition: transform 0.3s ease;
+			}
+
+			.book-container:hover .bookmark {
+				transform: translateY(0);
+			}
+
+			.last-read {
+				position: absolute;
+				bottom: 8px;
+				right: 12px;
+				font-size: 10px;
+				color: #ccc;
+				cursor: pointer;
+				transition: color 0.2s ease;
+			}
+
+			.last-read:hover {
+				color: #999;
+			}
+
+			@keyframes page-flip {
+				0% { transform: rotateY(0deg); }
+				50% { transform: rotateY(-10deg); }
+				100% { transform: rotateY(0deg); }
+			}
+
+			.book-cover.flipping {
+				animation: page-flip 0.6s ease-in-out;
+			}
+
+			.section {
+				margin-bottom: 60px;
+			}
+
+			.section-title {
+				font-size: 16px;
+				font-weight: 500;
+				margin-bottom: 20px;
+				color: #222;
+				cursor: pointer;
+				transition: all 0.3s ease;
+			}
+
+			.section-title:hover {
+				transform: rotate(-1deg);
+			}
+
+			.blog-list {
+				list-style: none;
+			}
+
+			.blog-item {
+				margin-bottom: 16px;
+				padding: 8px 0;
+				border-bottom: 1px solid #f0f0f0;
+				transition: all 0.2s ease;
+			}
+
+			.blog-item:hover {
+				background: #fafafa;
+				padding-left: 8px;
+				margin-left: -8px;
+				margin-right: -8px;
+			}
+
+			.blog-item:last-child {
+				border-bottom: none;
+			}
+
+			.blog-link {
+				text-decoration: none;
+				color: #333;
 				display: block;
 			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
+
+			.blog-title {
+				font-size: 15px;
+				font-weight: 400;
+				margin-bottom: 4px;
 			}
-			.date {
-				margin: 0;
-				font-weight: 100;
-				font-size:16px;
-				color: rgb(var(--gray));
+
+			.blog-date {
+				font-size: 13px;
+				color: #999;
 			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
+
+			.footer {
+				margin-top: 100px;
+				padding-top: 20px;
+				border-top: 1px solid #f0f0f0;
+				font-size: 13px;
+				color: #999;
+				cursor: pointer;
+				transition: color 0.3s ease;
 			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
+
+			.footer:hover {
+				color: #666;
 			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 1.5em;
+
+			@keyframes konami {
+				0% { transform: rotate(0deg); }
+				25% { transform: rotate(5deg); }
+				50% { transform: rotate(-5deg); }
+				75% { transform: rotate(3deg); }
+				100% { transform: rotate(0deg); }
+			}
+
+			.konami-mode {
+				animation: konami 0.5s ease-in-out;
+			}
+
+			.secret-mode {
+				background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+				background-size: 400% 400%;
+				animation: rainbow 3s ease infinite;
+			}
+
+			@keyframes rainbow {
+				0% { background-position: 0% 50%; }
+				50% { background-position: 100% 50%; }
+				100% { background-position: 0% 50%; }
+			}
+
+			@media (max-width: 480px) {
+				body {
+					padding: 30px 15px;
 				}
-				ul li {
-					width: 100%;
-					text-align: left;
+				
+				.nav {
+					gap: 20px;
 				}
-				ul li:first-child {
-					margin-bottom: 0;
+
+				.book-info {
+					gap: 12px;
 				}
-				ul li:first-child .title {
-					font-size: 1.563em;
+				
+				.book-cover {
+					width: 50px;
+					height: 75px;
+				}
+				
+				.reading-header {
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 5px;
 				}
 			}
 		</style>
 	</head>
 	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-									<h5 class="date">
-										<FormattedDate date={post.date} />
-									</h5>
-								<a href={`/blog/${post.slug}/`}>
-									<h4 class="title">{post.title}</h4>
-								</a>
-							</li>
-						))
+		<div class="header">
+			<h1 onclick="nameClick()">obodugo</h1>
+			<div class="subtitle" onclick="cycleTitle()">builder</div>
+			<div class="bio" onclick="cycleBio()">
+				i turn questions into products. everything else is noise.
+			</div>
+		</div>
+
+		<nav class="nav">
+			<a href="https://gistpool.com">gistpool</a>
+			<a href="https://mysub.app">mysub</a>
+			<a href="https://aristoman.com">aristoman</a>
+			<a href="/blog">writing</a>
+			<a href="mailto:alex@example.com">email</a>
+			<a href="https://github.com/alexchen">github</a>
+		</nav>
+
+		<div class="reading-section">
+			<div class="reading-header">
+				<h3 class="reading-title" onclick="cycleReadingTitle()">currently reading</h3>
+				<span class="reading-status" onclick="cycleStatus()">{reading.complete} complete</span>
+			</div>
+			
+			<div class="book-container" onclick="bookClick()">
+				<div class="bookmark"></div>
+				
+				<div class="book-info">
+					<div class="book-cover" onclick="flipCover(event)"></div>
+					
+					<div class="book-details">
+						<div class="book-title" onclick="cycleBookTitle(event)">{reading.title}</div>
+						<div class="book-author" onclick="cycleAuthor(event)">{reading.author}</div>
+						<div class="reading-note" onclick="cycleNote(event)">"{reading.note}"</div>		
+					</div>
+				</div>
+				
+				<div class="last-read" onclick="cycleLastRead(event)">yesterday</div>
+			</div>
+		</div>
+
+		<div class="section">
+			<h2 class="section-title" onclick="cycleSectionTitle()">recent writing</h2>
+			<ul class="blog-list">
+				{posts.map((post) => (
+					<li class="blog-item">
+						<a href={`/blog/${post.slug}/`} class="blog-link">
+							<div class="blog-title">{post.title}</div>
+							<div class="blog-date">{formatDate(post.date)}</div>
+						</a>
+					</li>
+				))}
+			</ul>
+		</div>
+
+		<div class="footer" onclick="revealSecret()">
+			built with html and css
+		</div>
+
+		<script>
+			// Existing code
+			const titles = ['builder', 'maker', 'creator', 'procrastinator', 'caffeine converter', 'digital nomad wannabe', 'startup survivor'];
+			let currentIndex = 0;
+			
+			function cycleTitle() {
+				currentIndex = (currentIndex + 1) % titles.length;
+				document.querySelector('.subtitle').textContent = titles[currentIndex];
+			}
+			
+			let clickCount = 0;
+			function revealSecret() {
+				clickCount++;
+				const footer = document.querySelector('.footer');
+				
+				if (clickCount === 1) {
+					footer.textContent = 'built with blood, sweat, and stackoverflow';
+				} else if (clickCount === 2) {
+					footer.textContent = 'actually just astro and substack rss (and 47 cups of coffee)';
+				} else if (clickCount === 3) {
+					footer.textContent = 'ok fine, i used chatgpt for the animations';
+				} else if (clickCount === 4) {
+					footer.textContent = 'stop clicking me';
+				} else {
+					footer.textContent = 'seriously, there are no more easter eggs';
+					clickCount = 0;
+				}
+			}
+
+			// New easter eggs
+			const bios = [
+				'i turn questions into products. everything else is noise.',
+				'i write code and pretend it\'s art. three failed startups and counting. optimistically pessimistic.',
+				'professional yak shaver. expert in reinventing wheels. ask me about my 47 unfinished side projects.',
+				'turning coffee into questionable business decisions since 2019. still figuring it out.',
+				'building things nobody asked for but hopefully someone needs. chronic overthinker.'
+			];
+			let bioIndex = 0;
+			
+			function cycleBio() {
+				bioIndex = (bioIndex + 1) % bios.length;
+				document.querySelector('.bio').innerHTML = bios[bioIndex];
+			}
+
+			const sectionTitles = ['recent writing', 'stuff i wrote', 'brain dumps', 'thoughts & regrets', 'digital diary'];
+			let sectionIndex = 0;
+			
+			function cycleSectionTitle() {
+				sectionIndex = (sectionIndex + 1) % sectionTitles.length;
+				document.querySelector('.section-title').textContent = sectionTitles[sectionIndex];
+			}
+
+			let nameClicks = 0;
+			function nameClick() {
+				nameClicks++;
+				const name = document.querySelector('h1');
+				
+				if (nameClicks === 5) {
+					name.textContent = 'obodugo "definitely not an ai" rapheal';
+				} else if (nameClicks === 10) {
+					name.textContent = '0b0dug0';
+					name.style.fontFamily = 'Comic Sans MS, cursive';
+				} else if (nameClicks === 15) {
+					name.textContent = 'obodugo rapheal (my full name)';
+					name.style.fontFamily = '';
+				} else if (nameClicks === 20) {
+					name.textContent = 'obodugo';
+					document.body.classList.add('secret-mode');
+					setTimeout(() => document.body.classList.remove('secret-mode'), 3000);
+					nameClicks = 0;
+				}
+			}
+
+			// Konami code easter egg
+			const konamiCode = [
+				'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+				'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+				'KeyB', 'KeyA'
+			];
+			let konamiIndex = 0;
+			
+			document.addEventListener('keydown', function(e) {
+				if (e.code === konamiCode[konamiIndex]) {
+					konamiIndex++;
+					if (konamiIndex === konamiCode.length) {
+						document.body.classList.add('konami-mode');
+						document.querySelector('h1').textContent = '🕹️ achievement unlocked: konami master';
+						setTimeout(() => {
+							document.querySelector('h1').textContent = 'obodugo';
+							document.body.classList.remove('konami-mode');
+						}, 2000);
+						konamiIndex = 0;
 					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
+				} else {
+					konamiIndex = 0;
+				}
+			});
+
+			// Secret typing easter egg
+			let secretBuffer = '';
+			document.addEventListener('keypress', function(e) {
+				secretBuffer += e.key;
+				if (secretBuffer.length > 10) {
+					secretBuffer = secretBuffer.slice(-10);
+				}
+				
+				if (secretBuffer.includes('hello')) {
+					document.querySelector('.bio').innerHTML = '👋 oh hey there! you found the secret. i see you.';
+					secretBuffer = '';
+				}
+				
+				if (secretBuffer.includes('coffee')) {
+					document.querySelector('h1').textContent = '☕ obodugo "caffeinated" rapheal';
+					setTimeout(() => document.querySelector('h1').textContent = 'obodugo', 3000);
+					secretBuffer = '';
+				}
+			});
+
+			// Time-based easter egg
+			const hour = new Date().getHours();
+			if (hour < 6 || hour > 22) {
+				document.querySelector('.subtitle').textContent = 'insomniac';
+			}
+
+			// Reading section interactions
+			const readingTitles = ['currently reading', 'obsessing over', 'slowly digesting', 'pretending to read', 'actually enjoying'];
+			let readingTitleIndex = 0;
+			
+			function cycleReadingTitle() {
+				readingTitleIndex = (readingTitleIndex + 1) % readingTitles.length;
+				document.querySelector('.reading-title').textContent = readingTitles[readingTitleIndex];
+			}
+
+			const statuses = ['34% complete', 'making progress', 'stuck on chapter 4', 'procrastinating', 'mind blown'];
+			let statusIndex = 0;
+			
+			function cycleStatus() {
+				statusIndex = (statusIndex + 1) % statuses.length;
+				document.querySelector('.reading-status').textContent = statuses[statusIndex];
+			}
+
+			const bookTitles = ['The Design of Everyday Things', 'How to Make Doors Less Confusing', 'Why Everything is Broken', 'Design for Humans 101'];
+			let bookTitleIndex = 0;
+			
+			function cycleBookTitle(e) {
+				e.stopPropagation();
+				bookTitleIndex = (bookTitleIndex + 1) % bookTitles.length;
+				document.querySelector('.book-title').textContent = bookTitles[bookTitleIndex];
+			}
+
+			const authors = ['Donald A. Norman', 'Don Norman', 'The Door Guy', 'UX Legend'];
+			let authorIndex = 0;
+			
+			function cycleAuthor(e) {
+				e.stopPropagation();
+				authorIndex = (authorIndex + 1) % authors.length;
+				document.querySelector('.book-author').textContent = authors[authorIndex];
+			}
+
+			const progressTexts = [
+				{ left: 'page 156 of 368', right: '2 weeks left' },
+				{ left: '42% done', right: 'forever to go' },
+				{ left: 'chapter 6 of 12', right: 'getting there' },
+				{ left: 'halfway through', right: 'ish' }
+			];
+			let progressIndex = 0;
+			
+			function cycleProgressText(e) {
+				e.stopPropagation();
+				progressIndex = (progressIndex + 1) % progressTexts.length;
+				const spans = document.querySelectorAll('.progress-text span');
+				spans[0].textContent = progressTexts[progressIndex].left;
+				spans[1].textContent = progressTexts[progressIndex].right;
+			}
+
+			const notes = [
+				'"finally understanding why doors confuse me so much"',
+				'"this explains everything wrong with my coffee maker"',
+				'"taking notes on every terrible interface"',
+				'"now i notice bad design everywhere"',
+				'"becoming insufferable about door handles"'
+			];
+			let noteIndex = 0;
+			
+			function cycleNote(e) {
+				e.stopPropagation();
+				noteIndex = (noteIndex + 1) % notes.length;
+				document.querySelector('.reading-note').textContent = notes[noteIndex];
+			}
+
+			const lastReads = ['yesterday', 'this morning', '3 days ago', 'last week', 'sometime recently'];
+			let lastReadIndex = 0;
+			
+			function cycleLastRead(e) {
+				e.stopPropagation();
+				lastReadIndex = (lastReadIndex + 1) % lastReads.length;
+				document.querySelector('.last-read').textContent = lastReads[lastReadIndex];
+			}
+
+			function flipCover(e) {
+				e.stopPropagation();
+				const cover = document.querySelector('.book-cover');
+				cover.classList.add('flipping');
+				setTimeout(() => cover.classList.remove('flipping'), 600);
+			}
+
+			function updateProgress(e) {
+				e.stopPropagation();
+				const progressFill = document.querySelector('.progress-fill');
+				const rect = e.currentTarget.getBoundingClientRect();
+				const x = e.clientX - rect.left;
+				const percentage = Math.min(Math.max((x / rect.width) * 100, 5), 95);
+				progressFill.style.width = percentage + '%';
+			}
+
+			function bookClick() {
+				const container = document.querySelector('.book-container');
+				container.style.transform = 'scale(0.98)';
+				setTimeout(() => {
+					container.style.transform = '';
+				}, 150);
+			}
+
+			// Random gradient for book cover
+			const gradients = [
+				'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+				'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+				'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+				'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+				'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+			];
+			
+			setInterval(() => {
+				const cover = document.querySelector('.book-cover');
+				if (cover) {
+					const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
+					cover.style.background = randomGradient;
+				}
+			}, 8000);
+		</script>
 	</body>
 </html>

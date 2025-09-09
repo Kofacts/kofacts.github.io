@@ -1,15 +1,11 @@
 ---
+// src/pages/blog/index.astro
 import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
-import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
 import { slugify } from '../../utils/slugify';
-
 import { parseStringPromise } from 'xml2js';
 
-const rssUrl = 'https://obodugo.substack.com/feed'; // Your Substack RSS feed
+const rssUrl = 'https://obodugo.substack.com/feed';
 
 const response = await fetch(rssUrl);
 const xml = await response.text();
@@ -22,102 +18,215 @@ const posts = json.rss.channel[0].item.map((item) => ({
   slug: slugify(item.title[0]),
   description: item.description ? item.description[0] : '',
 }));
+
+// Format date simply
+const formatDate = (dateStr) => {
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      return 'recently';
+    }
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long' 
+    }).toLowerCase();
+  } catch (e) {
+    return 'recently';
+  }
+};
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.slug}/`}>
-									<h4 class="title">{post.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.date} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
+<head>
+    <BaseHead title={`writing · ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            line-height: 1.6;
+            color: #333 !important;
+            background: #fff !important;
+            padding: 40px 20px !important;
+            max-width: 600px !important;
+            margin: 0 auto !important;
+        }
+
+        .back {
+            font-size: 13px;
+            color: #666;
+            text-decoration: none;
+            margin-bottom: 40px;
+            display: inline-block;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-transform: lowercase;
+            font-variant: small-caps;
+            letter-spacing: 0.5px;
+        }
+
+        .back:hover {
+            color: #000;
+            transform: translateX(-3px);
+        }
+
+        .back:before {
+            content: '← ';
+        }
+
+        .header {
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        h1:hover {
+            color: #666;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .subtitle:hover {
+            color: #333;
+        }
+
+        .post-count {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 40px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .post-count:hover {
+            color: #666;
+        }
+
+        .blog-list {
+            list-style: none;
+        }
+
+        .blog-item {
+            margin-bottom: 16px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.2s ease;
+        }
+
+        .blog-item:hover {
+            background: #fafafa;
+            padding-left: 8px;
+            margin-left: -8px;
+            margin-right: -8px;
+        }
+
+        .blog-item:last-child {
+            border-bottom: none;
+        }
+
+        .blog-link {
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+
+        .blog-title {
+            font-size: 15px;
+            font-weight: 400;
+            margin-bottom: 4px;
+        }
+
+        .blog-date {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .footer {
+            margin-top: 100px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 30px 15px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back">home</a>
+    
+    <div class="header">
+        <h1 onclick="titleClick()">writing</h1>
+        <div class="subtitle" onclick="cycleSubtitle()">collected thoughts</div>
+        <div class="post-count" onclick="cycleCount()">{posts.length} posts</div>
+    </div>
+
+    <ul class="blog-list">
+        {posts.map((post) => (
+            <li class="blog-item">
+                <a href={`/blog/${post.slug}/`} class="blog-link">
+                    <div class="blog-title">{post.title}</div>
+                    <div class="blog-date">{formatDate(post.date)}</div>
+                </a>
+            </li>
+        ))}
+    </ul>
+
+    <div class="footer">
+        all thoughts are my own (unfortunately)
+    </div>
+
+    <script>
+        // Title cycling
+        const titles = ['writing', 'thoughts', 'brain dumps', 'digital scraps', 'words'];
+        let titleIndex = 0;
+        
+        function titleClick() {
+            titleIndex = (titleIndex + 1) % titles.length;
+            document.querySelector('h1').textContent = titles[titleIndex];
+        }
+
+        // Subtitle cycling
+        const subtitles = ['collected thoughts', 'random musings', 'late night typing', 'caffeine-induced wisdom', 'structured procrastination'];
+        let subtitleIndex = 0;
+        
+        function cycleSubtitle() {
+            subtitleIndex = (subtitleIndex + 1) % subtitles.length;
+            document.querySelector('.subtitle').textContent = subtitles[subtitleIndex];
+        }
+
+        // Count cycling
+        const postCount = document.querySelector('.post-count').textContent;
+        const counts = [postCount, 'too many posts', 'some thoughts', 'words on internet', 'digital breadcrumbs'];
+        let countIndex = 0;
+        
+        function cycleCount() {
+            countIndex = (countIndex + 1) % counts.length;
+            document.querySelector('.post-count').textContent = counts[countIndex];
+        }
+    </script>
+</body>
 </html>
