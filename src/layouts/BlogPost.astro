@@ -8,9 +8,10 @@ export interface Props {
     link: string;
     content?: string;
     description?: string;
+    image?: string;
 }
 
-const { title, date, link, content, description } = Astro.props;
+const { title, date, link, content, description, image } = Astro.props;
 
 const ogSlug = title.toLowerCase()
   .replace(/[^a-z0-9]+/g, '-')
@@ -44,7 +45,7 @@ const getReadingTime = (content: string) => {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <BaseHead title={`${title} · obodugo rapheal`} description={description || title} />
+    <BaseHead title={`${title} · obodugo rapheal`} image={image} description={description || title} />
 
     <style is:global>
         /* Reset everything aggressively */
