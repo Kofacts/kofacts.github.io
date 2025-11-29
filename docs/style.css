@@ -844,3 +844,51 @@
         margin-top: 60px !important;
     }
 }
+
+/* Substack image styling - minimal */
+.captioned-image-container {
+    margin: 30px 0 !important;
+}
+
+.captioned-image-container figure {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.captioned-image-container img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 4px !important;
+}
+
+/* Hide Substack action buttons */
+.image-link-expand,
+.image2-inset > div:last-child,
+.pencraft.icon-container,
+button.restack-image,
+button.view-image,
+.image-link-expand .pencraft {
+    display: none !important;
+}
+
+/* Style image captions */
+.captioned-image-container figcaption,
+.image-caption,
+.captioned-image-container + p:first-of-type,
+figure + p {
+    font-size: 12px !important;
+    color: #999 !important;
+    margin-top: 8px !important;
+    font-style: normal !important;
+    text-align: left !important;
+}
+
+/* Hide any inline button elements in content */
+.blog-content button {
+    display: none !important;
+}
+
+/* Clean up any Substack SVG icons */
+.blog-content svg.lucide {
+    display: none !important;
+}
