@@ -871,11 +871,9 @@ button.view-image,
     display: none !important;
 }
 
-/* Style image captions */
+/* Style image captions only */
 .captioned-image-container figcaption,
-.image-caption,
-.captioned-image-container + p:first-of-type,
-figure + p {
+.image-caption {
     font-size: 12px !important;
     color: #999 !important;
     margin-top: 8px !important;
