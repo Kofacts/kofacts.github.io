@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "curl -s https://obodugo.substack.com/feed -o /tmp/substack-feed.xml",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

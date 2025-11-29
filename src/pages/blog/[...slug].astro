@@ -1,11 +1,9 @@
 ---
 // src/pages/blog/[...slug].astro
 import BlogPost from '../../layouts/BlogPost.astro';
-import { slugify } from '../../utils/slugify';
-import { parseStringPromise } from 'xml2js';
+import { fetchRSSPosts } from '../../utils/rss.js';
 
 export async function getStaticPaths() {
-    // Move the function inside getStaticPaths
     function extractFirstImage(htmlContent: string): string | null {
         if (!htmlContent) return null;
         
@@ -13,31 +11,19 @@ export async function getStaticPaths() {
         return imgMatch ? imgMatch[1] : null;
     }
 
-    const rssUrl = 'https://obodugo.substack.com/feed';
-    const response = await fetch(rssUrl);
-    const xml = await response.text();
-    const json = await parseStringPromise(xml);
+    const posts = await fetchRSSPosts();
 
-    const posts = json.rss.channel[0].item.map((item) => {
-        const content = item['content:encoded'] ? item['content:encoded'][0] : '';
-        const image = extractFirstImage(content);
-        
+    return posts.map((post) => {
+        const image = extractFirstImage(post.content);
         return {
-            title: item.title[0],
-            link: item.link[0],
-            date: item.pubDate[0],
-            pubDate: item.pubDate[0],
-            content,
-            description: item.description ? item.description[0] : '',
-            slug: slugify(item.title[0]),
-            image,
+            params: { slug: post.slug },
+            props: {
+                ...post,
+                pubDate: post.date,
+                image,
+            },
         };
     });
-
-    return posts.map((post) => ({
-        params: { slug: post.slug },
-        props: post,
-    }));
 }
 
 const post = Astro.props;

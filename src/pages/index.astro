@@ -1,25 +1,11 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import { slugify } from '../utils/slugify';
 import reading from '../../reading.json';
+import { fetchRSSPosts } from '../utils/rss.js';
 
-
-import { parseStringPromise } from 'xml2js';
-
-const rssUrl = 'https://obodugo.substack.com/feed'; // Your Substack RSS feed
-
-const response = await fetch(rssUrl);
-const xml = await response.text();
-const json = await parseStringPromise(xml);
-
-const posts = json.rss.channel[0].item.slice(0, 5).map((item) => ({
-  title: item.title[0],
-  link: item.link[0],
-  date: item.pubDate[0],
-  slug: slugify(item.title[0]),
-  description: item.description ? item.description[0] : '',
-}));
+const allPosts = await fetchRSSPosts();
+const posts = allPosts.slice(0, 5);
 
 // Format date simply
 const formatDate = (dateStr) => {
