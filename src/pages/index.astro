@@ -15,37 +15,68 @@ const formatDate = (dateStr) => {
     month: 'long' 
   }).toLowerCase();
 };
+
+// Person Schema for SEO
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Raphael Obodugo",
+  "alternateName": "Rapheal Obodugo",
+  "url": "https://obodugo.online",
+  "jobTitle": "Founder & Product Engineer",
+  "description": "Founder building execution reliability infrastructure. Previously built and exited MySub. Engineering leadership at Derayah Finance and infrastructure at Meta.",
+  "alumniOf": {
+    "@type": "Organization",
+    "name": "Meta"
+  },
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Avae",
+    "url": "https://avae.ai"
+  },
+  "knowsAbout": [
+    "Execution Infrastructure",
+    "Product Engineering",
+    "Reliability Systems",
+    "Emerging Markets",
+    "Offline-First Architecture"
+  ]
+};
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead 
+			title={SITE_TITLE} 
+			description={SITE_DESCRIPTION} 
+			structuredData={personSchema}
+			ogType="profile"
+		/>
 		<style>
 
 		</style>
 	</head>
 	<body>
-		<div class="header">
-			<h1 onclick="nameClick()">obodugo</h1>
-			<div class="subtitle" onclick="cycleTitle()">builder</div>
+		<header class="header">
+			<h1 onclick="nameClick()">Raphael Obodugo</h1>
+			<div class="subtitle" onclick="cycleTitle()">Building execution reliability infrastructure at Avae</div>
 			<div class="bio" onclick="cycleBio()">
-				i turn questions into products. everything else is noise.
+				Previously: Built and exited MySub (360k users, West Africa). Engineering leadership at Derayah Finance, infrastructure at Meta.
 			</div>
-		</div>
+		</header>
 
 		<nav class="nav">
-			<a href="https://gistpool.com">gistpool</a>
-			<a href="https://mysub.io">mysub</a>
-			<a href="https://aristoman.com">aristoman</a>
 			<a href="/blog">writing</a>
 			<a href="https://calendar.app.google/JWpSBB15VvwmQUdA8" target="_blank">book a call</a>
 			<a href="mailto:raph@avae.ai">email</a>
 		</nav>
 
-		<div class="reading-section">
+		<main>
+
+		<section class="reading-section">
 			<div class="reading-header">
-				<h3 class="reading-title" onclick="cycleReadingTitle()">currently reading</h3>
+				<h2 class="reading-title" onclick="cycleReadingTitle()">currently reading</h2>
 				<span class="reading-status" onclick="cycleStatus()">{reading.complete} complete</span>
 			</div>
 			
@@ -64,9 +95,9 @@ const formatDate = (dateStr) => {
 				
 				<div class="last-read" onclick="cycleLastRead(event)">yesterday</div>
 			</div>
-		</div>
+		</section>
 
-		<div class="section">
+		<section class="section">
 			<h2 class="section-title" onclick="cycleSectionTitle()">recent writing</h2>
 			<ul class="blog-list">
 				{posts.map((post) => (
@@ -78,10 +109,13 @@ const formatDate = (dateStr) => {
 					</li>
 				))}
 			</ul>
-		</div>
+		</section>
 
-		<div class="footer" onclick="revealSecret()">
+		</main>
+
+		<footer class="footer" onclick="revealSecret()">
 			built with html and css
+		</footer>
 		</div>
 
 		<script>

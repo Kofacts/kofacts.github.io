@@ -40,12 +40,42 @@ const getReadingTime = (content: string) => {
     const minutes = Math.ceil(words / 200);
     return `${minutes} min read`;
 };
+
+// Article Schema for SEO
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "author": {
+    "@type": "Person",
+    "name": "Raphael Obodugo",
+    "url": "https://obodugo.online"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Raphael Obodugo",
+    "url": "https://obodugo.online"
+  },
+  "datePublished": date,
+  "dateModified": date,
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": Astro.url.href
+  },
+  "image": image || "https://obodugo.online/ogmeta.png",
+  "description": description || title
+};
 ---
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <BaseHead title={`${title} · obodugo rapheal`} image={image} description={description || title} />
+    <BaseHead 
+        title={`${title} · Raphael Obodugo`} 
+        image={image} 
+        description={description || title}
+        structuredData={articleSchema}
+    />
 
     <style is:global>
         /* Reset everything aggressively */
@@ -60,7 +90,7 @@ const getReadingTime = (content: string) => {
         <h1 onclick="titleClick()">{title}</h1>
         <div class="meta">
             <span class="date" onclick="cycleDate()">{formatDate(date)}</span>
-            <span class="author" onclick="cycleAuthor()">obodugo rapheal</span>
+            <span class="author" onclick="cycleAuthor()">Raphael Obodugo</span>
             <span class="reading-time" onclick="toggleReadingTime()">{getReadingTime(content || '')}</span>
         </div>
     </header>
@@ -129,7 +159,7 @@ const getReadingTime = (content: string) => {
         }
 
         // Author cycling
-        const authors = ['obodugo rapheal', 'definitely obodugo', 'not a ghost writer', 'coffee-fueled obodugo', 'obodugo (past tense)'];
+        const authors = ['Raphael Obodugo', 'definitely raphael', 'not a ghost writer', 'coffee-fueled raphael', 'raphael (past tense)'];
         let authorIndex = 0;
         
         function cycleAuthor() {
