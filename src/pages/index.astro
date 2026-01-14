@@ -63,7 +63,7 @@ const personSchema = {
 	</head>
 	<body>
 		<header class="header">
-			<img src="/ajabruwal.png" alt="Rapheal Obodugo" class="profile-photo" onclick="photoClick()">
+			<img src="/profile-128.png" alt="Rapheal Obodugo" class="profile-photo" onclick="photoClick()">
 			<h1 onclick="nameClick()">Rapheal Obodugo</h1>
 			<div class="subtitle" onclick="cycleTitle()">Building execution reliability infrastructure at Avae</div>
 			<div class="bio" onclick="cycleBio()">
@@ -182,18 +182,41 @@ const personSchema = {
 				const name = document.querySelector('h1');
 				
 				if (nameClicks === 5) {
-					name.textContent = 'obodugo "definitely not an ai" rapheal';
+					name.textContent = 'rapheal "definitely not an ai" obodugo';
 				} else if (nameClicks === 10) {
-					name.textContent = '0b0dug0';
+					name.textContent = 'r4ph34l 0b0dug0';
 					name.style.fontFamily = 'Comic Sans MS, cursive';
 				} else if (nameClicks === 15) {
-					name.textContent = 'obodugo rapheal (my full name)';
+					name.textContent = 'rapheal obodugo (my actual name)';
 					name.style.fontFamily = '';
 				} else if (nameClicks === 20) {
-					name.textContent = 'obodugo';
+					name.textContent = 'rapheal obodugo';
 					document.body.classList.add('secret-mode');
 					setTimeout(() => document.body.classList.remove('secret-mode'), 3000);
 					nameClicks = 0;
+				}
+			}
+
+			// Photo easter egg
+			let photoClicks = 0;
+			function photoClick() {
+				photoClicks++;
+				const photo = document.querySelector('.profile-photo');
+				
+				if (photoClicks === 3) {
+					photo.style.transform = 'rotate(180deg)';
+				} else if (photoClicks === 5) {
+					photo.style.transform = 'rotate(360deg) scale(1.5)';
+				} else if (photoClicks === 7) {
+					photo.style.borderRadius = '0';
+					photo.style.transform = 'rotate(45deg)';
+				} else if (photoClicks === 10) {
+					photo.style.filter = 'grayscale(100%)';
+				} else if (photoClicks === 15) {
+					photo.style.transform = '';
+					photo.style.borderRadius = '';
+					photo.style.filter = '';
+					photoClicks = 0;
 				}
 			}
 
