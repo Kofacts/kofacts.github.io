@@ -58,12 +58,26 @@ const personSchema = {
 			ogType="profile"
 		/>
 		<style>
-
+			.profile-photo {
+				width: 64px;
+				height: 64px;
+				border-radius: 50%;
+				object-fit: cover;
+				margin-bottom: 20px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				display: block;
+			}
+			
+			.profile-photo:hover {
+				transform: scale(1.05);
+				box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+			}
 		</style>
 	</head>
 	<body>
 		<header class="header">
-			<img src="/profile-64.png" alt="Rapheal Obodugo" class="profile-photo" onclick="photoClick()">
+			<img src="/ajabruwal.png" alt="Rapheal Obodugo" class="profile-photo" onclick="photoClick()">
 			<h1 onclick="nameClick()">Rapheal Obodugo</h1>
 			<div class="subtitle" onclick="cycleTitle()">Building execution reliability infrastructure at Avae</div>
 			<div class="bio" onclick="cycleBio()">
