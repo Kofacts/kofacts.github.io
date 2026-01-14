@@ -48,12 +48,12 @@ const articleSchema = {
   "headline": title,
   "author": {
     "@type": "Person",
-    "name": "Raphael Obodugo",
+    "name": "Rapheal Obodugo",
     "url": "https://obodugo.online"
   },
   "publisher": {
     "@type": "Person",
-    "name": "Raphael Obodugo",
+    "name": "Rapheal Obodugo",
     "url": "https://obodugo.online"
   },
   "datePublished": date,
@@ -71,7 +71,7 @@ const articleSchema = {
 <html lang="en">
 <head>
     <BaseHead 
-        title={`${title} · Raphael Obodugo`} 
+        title={`${title} · Rapheal Obodugo`} 
         image={image} 
         description={description || title}
         structuredData={articleSchema}
@@ -90,7 +90,7 @@ const articleSchema = {
         <h1 onclick="titleClick()">{title}</h1>
         <div class="meta">
             <span class="date" onclick="cycleDate()">{formatDate(date)}</span>
-            <span class="author" onclick="cycleAuthor()">Raphael Obodugo</span>
+            <span class="author" onclick="cycleAuthor()">Rapheal Obodugo</span>
             <span class="reading-time" onclick="toggleReadingTime()">{getReadingTime(content || '')}</span>
         </div>
     </header>
@@ -159,7 +159,7 @@ const articleSchema = {
         }
 
         // Author cycling
-        const authors = ['Raphael Obodugo', 'definitely raphael', 'not a ghost writer', 'coffee-fueled raphael', 'raphael (past tense)'];
+        const authors = ['Rapheal Obodugo', 'definitely rapheal', 'not a ghost writer', 'coffee-fueled rapheal', 'rapheal (past tense)'];
         let authorIndex = 0;
         
         function cycleAuthor() {
