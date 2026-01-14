@@ -1,0 +1,117 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`now · ${SITE_TITLE}`} description="What Raphael Obodugo is currently working on" />
+		<style>
+
+		</style>
+	</head>
+	<body>
+		<a href="/" class="back">home</a>
+		
+		<div class="header">
+			<h1 onclick="cycleTitle()">now</h1>
+			<div class="subtitle" onclick="cycleSubtitle()">what i'm doing right now</div>
+		</div>
+
+		<div class="content">
+			<section class="building">
+				<h2 onclick="cycleHeading(event, 0)">building</h2>
+				<div class="item" onclick="pulse(event)">
+					<h3>avae</h3>
+					<p>execution reliability infrastructure for autonomous systems. private beta, strong usage signals.</p>
+				</div>
+			</section>
+
+			<section class="work">
+				<h2 onclick="cycleHeading(event, 1)">work</h2>
+				<div class="item" onclick="pulse(event)">
+					<p>engineering leadership at derayah finance. modernizing trading dashboards and onboarding workflows.</p>
+				</div>
+			</section>
+
+			<section class="reading">
+				<h2 onclick="cycleHeading(event, 2)">reading</h2>
+				<div class="item" onclick="pulse(event)">
+					<p>secrets of sand hill road by scott kupor. understanding the mechanics of venture capital.</p>
+				</div>
+			</section>
+		</div>
+
+		<div class="footer" onclick="cycleFooter()">
+			last updated: january 2026
+		</div>
+
+		<script>
+			// Title cycling
+			const titles = ['now', 'current state', 'status', 'the present'];
+			let titleIndex = 0;
+			
+			function cycleTitle() {
+				titleIndex = (titleIndex + 1) % titles.length;
+				document.querySelector('h1').textContent = titles[titleIndex];
+			}
+
+			// Subtitle cycling
+			const subtitles = [
+				'what i\'m doing right now',
+				'current focus areas',
+				'my present moment',
+				'real-time status update',
+				'what\'s occupying my brain'
+			];
+			let subtitleIndex = 0;
+			
+			function cycleSubtitle() {
+				subtitleIndex = (subtitleIndex + 1) % subtitles.length;
+				document.querySelector('.subtitle').textContent = subtitles[subtitleIndex];
+			}
+
+			// Section heading cycling
+			const headings = [
+				['building', 'creating', 'shipping', 'making'],
+				['work', 'day job', 'employment', 'paycheck'],
+				['reading', 'consuming', 'studying', 'absorbing']
+			];
+			
+			function cycleHeading(e, index) {
+				e.stopPropagation();
+				const h2 = e.currentTarget;
+				const options = headings[index];
+				const current = h2.textContent;
+				const currentIndex = options.indexOf(current);
+				const nextIndex = (currentIndex + 1) % options.length;
+				h2.textContent = options[nextIndex];
+			}
+
+			// Footer cycling
+			const footers = [
+				'last updated: january 2026',
+				'updated recently',
+				'freshness: questionable',
+				'current as of: now-ish',
+				'timestamp: the present'
+			];
+			let footerIndex = 0;
+			
+			function cycleFooter() {
+				footerIndex = (footerIndex + 1) % footers.length;
+				document.querySelector('.footer').textContent = footers[footerIndex];
+			}
+
+			// Pulse animation
+			function pulse(e) {
+				const item = e.currentTarget;
+				item.style.transform = 'scale(0.98)';
+				setTimeout(() => {
+					item.style.transform = '';
+				}, 150);
+			}
+		</script>
+	</body>
+</html>
