@@ -135,8 +135,12 @@ const formatDate = (dateStr) => {
 		align-items: baseline;
 		gap: 16px;
 		padding: 14px 0;
+		padding-left: 12px;
+		margin-left: -14px;
 		text-decoration: none;
 		border-bottom: 1px solid #18181b;
+		border-left: 2px solid transparent;
+		transition: transform 0.2s ease, border-color 0.2s ease;
 	}
 	
 	li:last-child .post {
@@ -147,6 +151,11 @@ const formatDate = (dateStr) => {
 		font-size: 15px;
 		color: #d4d4d8;
 		transition: color 0.2s;
+	}
+	
+	.post:hover {
+		transform: translateX(4px);
+		border-left-color: #3f3f46;
 	}
 	
 	.post:hover .title {

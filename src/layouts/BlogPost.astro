@@ -60,6 +60,8 @@ const articleSchema = {
 </head>
 <body>
 
+<div class="scroll-progress" id="scrollProgress"></div>
+
 <main>
     <a href="/" class="profile-link">
         <span class="back-arrow">←</span>
@@ -102,6 +104,18 @@ const articleSchema = {
         color: #a1a1aa;
         line-height: 1.7;
         -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Scroll Progress */
+    .scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #3f3f46, #52525b);
+        width: 0%;
+        z-index: 10000;
+        transition: width 0.1s ease-out;
     }
     
     main {
@@ -342,6 +356,18 @@ const articleSchema = {
         h1 { font-size: 20px; }
     }
 </style>
+
+<script>
+    const progressBar = document.getElementById('scrollProgress');
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (progressBar && docHeight > 0) {
+            const progress = (scrollY / docHeight) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+    }, { passive: true });
+</script>
 
 </body>
 </html>
