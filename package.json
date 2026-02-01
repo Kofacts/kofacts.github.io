@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "prebuild": "curl -s https://obodugo.substack.com/feed -o /tmp/substack-feed.xml",
     "build": "astro build",
+    "postbuild": "touch docs/.nojekyll",
     "preview": "astro preview",
     "astro": "astro"
   },
