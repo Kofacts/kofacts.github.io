@@ -28,6 +28,7 @@ const formatDate = (dateStr) => {
 
 <main>
 	<a href="/" class="profile-link">
+		<span class="back-arrow">←</span>
 		<img src="/ajabruwal.png" alt="" class="mini-avatar">
 		<span class="mini-name">Rapheal Obodugo</span>
 	</a>
@@ -76,6 +77,17 @@ const formatDate = (dateStr) => {
 		gap: 10px;
 		text-decoration: none;
 		margin-bottom: 40px;
+	}
+	
+	.back-arrow {
+		font-size: 14px;
+		color: #52525b;
+		transition: transform 0.2s, color 0.2s;
+	}
+	
+	.profile-link:hover .back-arrow {
+		transform: translateX(-3px);
+		color: #71717a;
 	}
 	
 	.mini-avatar {

@@ -37,6 +37,8 @@ const personSchema = {
 	<div class="sticky-inner">
 		<img src="/ajabruwal.png" alt="" class="sticky-avatar">
 		<span class="sticky-name">Rapheal Obodugo</span>
+		<span class="sticky-spacer"></span>
+		<span class="sticky-time" id="londonTime"></span>
 	</div>
 </div>
 
@@ -410,11 +412,38 @@ const personSchema = {
 		color: #fafafa;
 	}
 	
+	.sticky-spacer {
+		flex: 1;
+	}
+	
+	.sticky-time {
+		font-size: 12px;
+		color: #52525b;
+		font-variant-numeric: tabular-nums;
+	}
+	
 	/* Mobile */
 	@media (max-width: 520px) {
 		main { padding: 48px 20px 64px; }
 		.post { flex-direction: column; gap: 4px; }
-		.sticky-header { padding: 10px 16px; }
+		.sticky-header { 
+			top: 12px;
+			width: calc(100% - 32px);
+		}
+		.sticky-inner {
+			padding: 10px 16px;
+			gap: 8px;
+		}
+		.sticky-avatar {
+			width: 24px;
+			height: 24px;
+		}
+		.sticky-name {
+			font-size: 13px;
+		}
+		.sticky-time {
+			font-size: 11px;
+		}
 	}
 </style>
 
@@ -434,6 +463,21 @@ const personSchema = {
 	);
 	
 	if (header) observer.observe(header);
+	
+	// London time clock
+	const timeEl = document.getElementById('londonTime');
+	const updateTime = () => {
+		const now = new Date();
+		const london = now.toLocaleTimeString('en-GB', {
+			timeZone: 'Europe/London',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: false
+		});
+		timeEl.textContent = `${london} London`;
+	};
+	updateTime();
+	setInterval(updateTime, 60000);
 </script>
 
 </body>
