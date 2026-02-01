@@ -387,8 +387,11 @@ const personSchema = {
 	.links {
 		display: flex;
 		gap: 20px;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 		margin-bottom: 64px;
+		padding-bottom: 4px;
 	}
 	
 	.links a {
