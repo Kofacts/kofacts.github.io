@@ -1,5 +1,4 @@
 ---
-// src/layouts/BlogPost.astro
 import BaseHead from '../components/BaseHead.astro';
 
 export interface Props {
@@ -13,35 +12,23 @@ export interface Props {
 
 const { title, date, link, content, description, image } = Astro.props;
 
-const ogSlug = title.toLowerCase()
-  .replace(/[^a-z0-9]+/g, '-')
-  .replace(/^-|-$/g, '');
-
-// Format date simply
 const formatDate = (dateStr: string) => {
     try {
-        const date = new Date(dateStr);
-        if (isNaN(date.getTime())) {
-            return 'recently'; // fallback for invalid dates
-        }
-        return date.toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long' 
-        }).toLowerCase();
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return '';
+        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
     } catch (e) {
-        return 'recently';
+        return '';
     }
 };
 
-// Simple reading time calculation
 const getReadingTime = (content: string) => {
-    if (!content) return '2 min read';
+    if (!content) return '2 min';
     const words = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
     const minutes = Math.ceil(words / 200);
-    return `${minutes} min read`;
+    return `${minutes} min`;
 };
 
-// Article Schema for SEO
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -51,23 +38,14 @@ const articleSchema = {
     "name": "Rapheal Obodugo",
     "url": "https://obodugo.online"
   },
-  "publisher": {
-    "@type": "Person",
-    "name": "Rapheal Obodugo",
-    "url": "https://obodugo.online"
-  },
   "datePublished": date,
-  "dateModified": date,
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": Astro.url.href
-  },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": Astro.url.href },
   "image": image || "https://obodugo.online/ogmeta.png",
   "description": description || title
 };
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <BaseHead 
@@ -76,177 +54,282 @@ const articleSchema = {
         description={description || title}
         structuredData={articleSchema}
     />
-
-    <style is:global>
-        /* Reset everything aggressively */
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="progress-bar" id="progressBar"></div>
+
+<main>
+    <a href="/" class="profile-link">
+        <img src="/ajabruwal.png" alt="" class="mini-avatar">
+        <span class="mini-name">Rapheal Obodugo</span>
+    </a>
     
-    <a href="/blog" class="back" onclick="goBack()">back</a>
-    
-    <header class="blog-header">
-        <h1 onclick="titleClick()">{title}</h1>
+    <header>
+        <h1>{title}</h1>
         <div class="meta">
-            <span class="date" onclick="cycleDate()">{formatDate(date)}</span>
-            <span class="author" onclick="cycleAuthor()">Rapheal Obodugo</span>
-            <span class="reading-time" onclick="toggleReadingTime()">{getReadingTime(content || '')}</span>
+            <span>{formatDate(date)}</span>
+            <span class="sep">·</span>
+            <span>{getReadingTime(content || '')}</span>
         </div>
     </header>
     
-    <article class="blog-content">
+    <article>
         {content ? (
             <div set:html={content} />
         ) : (
-            <p>This is a preview. The full post is available on Substack.</p>
+            <p>Preview. Full post on Substack.</p>
         )}
-        
-        <a href={link} target="_blank" rel="noopener noreferrer" class="substack-link">
-            Read full post on Substack →
-        </a>
     </article>
     
-    <nav class="footer-nav">
-        <a href="/blog">← all posts</a>
-        <a href="/">home</a>
-        <a href={link} target="_blank">substack →</a>
-    </nav>
+    <footer>
+        <a href={link} target="_blank" class="substack">Read on Substack ↗</a>
+        <nav>
+            <a href="/blog">← All essays</a>
+            <a href="/">Home</a>
+        </nav>
+    </footer>
+</main>
+
+<style is:global>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
-    <div class="easter-egg" id="easterEgg" onclick="activateEasterEgg()">
-        🥚
-    </div>
+    body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: #09090b;
+        color: #a1a1aa;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+    }
+    
+    main {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 80px 24px 100px;
+    }
+    
+    .profile-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        margin-bottom: 40px;
+    }
+    
+    .mini-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        opacity: 0.9;
+    }
+    
+    .mini-name {
+        font-size: 14px;
+        color: #71717a;
+        transition: color 0.2s;
+    }
+    
+    .profile-link:hover .mini-name {
+        color: #a1a1aa;
+    }
+    
+    header {
+        margin-bottom: 48px;
+    }
+    
+    h1 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #fafafa;
+        letter-spacing: -0.02em;
+        line-height: 1.3;
+        margin-bottom: 12px;
+    }
+    
+    .meta {
+        font-size: 13px;
+        color: #52525b;
+    }
+    
+    .sep {
+        margin: 0 8px;
+        opacity: 0.5;
+    }
+    
+    article {
+        margin-bottom: 64px;
+    }
+    
+    article p {
+        font-size: 16px;
+        color: #d4d4d8;
+        margin-bottom: 24px;
+        line-height: 1.8;
+    }
+    
+    article h2 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #fafafa;
+        margin: 40px 0 16px;
+    }
+    
+    article h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #e4e4e7;
+        margin: 32px 0 12px;
+    }
+    
+    article a {
+        color: #d4d4d8;
+        text-decoration: underline;
+        text-decoration-color: #3f3f46;
+        text-underline-offset: 3px;
+        transition: text-decoration-color 0.2s;
+    }
+    
+    article a:hover {
+        text-decoration-color: #71717a;
+    }
+    
+    article ul, article ol {
+        margin: 0 0 24px 24px;
+        color: #d4d4d8;
+    }
+    
+    article li {
+        margin-bottom: 8px;
+    }
+    
+    article blockquote {
+        border-left: 2px solid #27272a;
+        padding-left: 20px;
+        margin: 24px 0;
+        color: #71717a;
+        font-style: italic;
+    }
+    
+    article code {
+        font-family: 'SF Mono', Monaco, monospace;
+        font-size: 0.9em;
+        background: #18181b;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #e4e4e7;
+    }
+    
+    article pre {
+        background: #18181b;
+        padding: 16px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 24px 0;
+    }
+    
+    article pre code {
+        background: none;
+        padding: 0;
+    }
+    
+    article img {
+        display: block !important;
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 24px 0;
+    }
+    
+    article img.sizing-normal,
+    article img.sizing-full-width {
+        display: block !important;
+        width: 100%;
+    }
+    
+    /* Hide Substack embed junk */
+    article .button-wrapper,
+    article .subscription-widget,
+    article .subscribe-widget,
+    article .image-link-expand,
+    article .pencraft,
+    article .post-ufi,
+    article .like-button,
+    article .share-button,
+    article .comment-button,
+    article [class*="subscribe"],
+    article [class*="button-wrapper"] {
+        display: none !important;
+    }
+    
+    article figure {
+        margin: 24px 0;
+    }
+    
+    article figcaption {
+        font-size: 13px;
+        color: #52525b;
+        text-align: center;
+        margin-top: 8px;
+    }
+    
+    article .captioned-image-container {
+        margin: 24px 0;
+    }
+    
+    article .image-container img,
+    article .captioned-image-container img {
+        border-radius: 8px;
+    }
+    
+    article hr {
+        border: none;
+        border-top: 1px solid #27272a;
+        margin: 40px 0;
+    }
+    
+    footer {
+        padding-top: 32px;
+        border-top: 1px solid #18181b;
+    }
+    
+    .substack {
+        display: inline-block;
+        font-size: 14px;
+        color: #a1a1aa;
+        text-decoration: none;
+        padding: 10px 16px;
+        background: #18181b;
+        border-radius: 6px;
+        margin-bottom: 24px;
+        transition: background 0.2s;
+    }
+    
+    .substack:hover {
+        background: #27272a;
+    }
+    
+    nav {
+        display: flex;
+        gap: 24px;
+    }
+    
+    nav a {
+        font-size: 13px;
+        color: #52525b;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    
+    nav a:hover {
+        color: #a1a1aa;
+    }
+    
+    @media (max-width: 520px) {
+        main { padding: 48px 20px 64px; }
+        h1 { font-size: 20px; }
+    }
+</style>
 
-    <script>
-        // Reading progress bar
-        window.addEventListener('scroll', function() {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById('progressBar').style.width = scrolled + '%';
-            
-            // Show easter egg after 50% scroll
-            const easterEgg = document.getElementById('easterEgg');
-            if (scrolled > 50) {
-                easterEgg.classList.add('visible');
-            }
-        });
-
-        // Store original title for cycling
-        const originalTitle = document.querySelector('h1').textContent;
-        const titleVariations = [
-            originalTitle,
-            originalTitle + ' (probably)',
-            originalTitle + ' (trust me)',
-            'thoughts on ' + originalTitle.toLowerCase(),
-            originalTitle + ' (hot take)'
-        ];
-        let titleIndex = 0;
-        
-        function titleClick() {
-            titleIndex = (titleIndex + 1) % titleVariations.length;
-            document.querySelector('h1').textContent = titleVariations[titleIndex];
-        }
-
-        // Date cycling
-        const originalDate = document.querySelector('.date').textContent;
-        const dates = [originalDate, 'a while ago', 'recently', 'when i was procrastinating', 'sometime in the past'];
-        let dateIndex = 0;
-        
-        function cycleDate() {
-            dateIndex = (dateIndex + 1) % dates.length;
-            document.querySelector('.date').textContent = dates[dateIndex];
-        }
-
-        // Author cycling
-        const authors = ['Rapheal Obodugo', 'definitely rapheal', 'not a ghost writer', 'coffee-fueled rapheal', 'rapheal (past tense)'];
-        let authorIndex = 0;
-        
-        function cycleAuthor() {
-            authorIndex = (authorIndex + 1) % authors.length;
-            document.querySelector('.author').textContent = authors[authorIndex];
-        }
-
-        // Reading time cycling
-        const originalTime = document.querySelector('.reading-time').textContent;
-        const readingTimes = [originalTime, '2 min skim', '30 sec if you skip to the end', 'however long you want', '∞ if you overthink it'];
-        let timeIndex = 0;
-        
-        function toggleReadingTime() {
-            timeIndex = (timeIndex + 1) % readingTimes.length;
-            document.querySelector('.reading-time').textContent = readingTimes[timeIndex];
-        }
-
-        // Back button enhancement
-        function goBack() {
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                window.location.href = '/blog';
-            }
-        }
-
-        // Easter egg
-        let easterEggClicks = 0;
-        function activateEasterEgg() {
-            easterEggClicks++;
-            const egg = document.getElementById('easterEgg');
-            
-            if (easterEggClicks === 1) {
-                egg.textContent = '🐣';
-            } else if (easterEggClicks === 2) {
-                egg.textContent = '🐥';
-            } else if (easterEggClicks === 3) {
-                egg.textContent = '🐔';
-                document.body.classList.add('shake');
-                setTimeout(() => document.body.classList.remove('shake'), 500);
-            } else if (easterEggClicks === 4) {
-                egg.textContent = '🍗';
-            } else {
-                egg.textContent = '💀';
-                easterEggClicks = 0;
-            }
-        }
-
-        // Konami code
-        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
-        let konamiIndex = 0;
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.code === konamiCode[konamiIndex]) {
-                konamiIndex++;
-                if (konamiIndex === konamiCode.length) {
-                    document.querySelector('h1').textContent = '🕹️ you found the secret level!';
-                    document.body.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
-                    setTimeout(() => {
-                        document.querySelector('h1').textContent = titleVariations[titleIndex];
-                        document.body.style.background = '#fff';
-                    }, 3000);
-                    konamiIndex = 0;
-                }
-            } else {
-                konamiIndex = 0;
-            }
-        });
-
-        // Secret typing easter eggs
-        let secretBuffer = '';
-        document.addEventListener('keypress', function(e) {
-            secretBuffer += e.key;
-            if (secretBuffer.length > 10) {
-                secretBuffer = secretBuffer.slice(-10);
-            }
-            
-            if (secretBuffer.includes('substack')) {
-                document.querySelector('.author').textContent = 'substack obodugo';
-                secretBuffer = '';
-            }
-            
-            if (secretBuffer.includes('builder')) {
-                document.querySelector('.reading-time').textContent = 'built while reading';
-                secretBuffer = '';
-            }
-        });
-    </script>
 </body>
 </html>

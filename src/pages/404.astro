@@ -1,0 +1,71 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+	<BaseHead title={`Not Found · ${SITE_TITLE}`} description="Page not found" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<main>
+	<div class="content">
+		<h1>404</h1>
+		<p>This page doesn't exist.</p>
+		<a href="/">← Back home</a>
+	</div>
+</main>
+
+<style is:global>
+	* { margin: 0; padding: 0; box-sizing: border-box; }
+	
+	body {
+		font-family: 'Inter', system-ui, sans-serif;
+		background: #09090b;
+		color: #a1a1aa;
+		line-height: 1.65;
+		-webkit-font-smoothing: antialiased;
+		min-height: 100vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	
+	main {
+		text-align: center;
+		padding: 24px;
+	}
+	
+	h1 {
+		font-size: 72px;
+		font-weight: 600;
+		color: #27272a;
+		letter-spacing: -0.03em;
+		margin-bottom: 8px;
+	}
+	
+	p {
+		font-size: 16px;
+		color: #52525b;
+		margin-bottom: 32px;
+	}
+	
+	a {
+		font-size: 14px;
+		color: #71717a;
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+	
+	a:hover {
+		color: #a1a1aa;
+	}
+</style>
+
+</body>
+</html>

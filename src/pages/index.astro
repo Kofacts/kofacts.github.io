@@ -1,405 +1,440 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import reading from '../../reading.json';
 import { fetchRSSPosts } from '../utils/rss.js';
+import { fetchGoodreadsCurrentlyReading } from '../utils/goodreads.js';
 
 const allPosts = await fetchRSSPosts();
-const posts = allPosts.slice(0, 5);
+const essays = allPosts.slice(0, 5);
+const currentlyReading = await fetchGoodreadsCurrentlyReading();
 
-// Format date simply
 const formatDate = (dateStr) => {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long' 
-  }).toLowerCase();
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
 };
 
-// Person Schema for SEO
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Rapheal Obodugo",
-  "alternateName": "Raphael Obodugo",
   "url": "https://obodugo.online",
-  "jobTitle": "Founder & Product Engineer",
-  "description": "Founder building execution reliability infrastructure. Previously built and exited MySub. Engineering leadership at Derayah Finance and infrastructure at Meta.",
-  "sameAs": [
-    "https://linkedin.com/in/obodugo",
-    "https://twitter.com/thekofacts"
-  ],
-  "alumniOf": {
-    "@type": "Organization",
-    "name": "Meta"
-  },
-  "worksFor": {
-    "@type": "Organization",
-    "name": "Avae",
-    "url": "https://avae.ai"
-  },
-  "knowsAbout": [
-    "Execution Infrastructure",
-    "Product Engineering",
-    "Reliability Systems",
-    "Emerging Markets",
-    "Offline-First Architecture"
-  ]
+  "jobTitle": "Founder",
+  "worksFor": { "@type": "Organization", "name": "Avae", "url": "https://avae.ai" }
 };
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead 
-			title={SITE_TITLE} 
-			description={SITE_DESCRIPTION} 
-			structuredData={personSchema}
-			ogType="profile"
-		/>
-		<style>
-			.profile-photo {
-				width: 64px;
-				height: 64px;
-				border-radius: 50%;
-				object-fit: cover;
-				margin-bottom: 20px;
-				cursor: pointer;
-				transition: all 0.3s ease;
-				display: block;
-			}
-			
-			.profile-photo:hover {
-				transform: scale(1.05);
-				box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-			}
-		</style>
-	</head>
-	<body>
-		<header class="header">
-			<img src="/ajabruwal.png" alt="Rapheal Obodugo" class="profile-photo" onclick="photoClick()">
-			<h1 onclick="nameClick()">Rapheal Obodugo</h1>
-			<div class="subtitle" onclick="cycleTitle()">Building execution reliability infrastructure at Avae</div>
-			<div class="bio" onclick="cycleBio()">
-				Previously: Built and exited MySub (360k users, West Africa). Engineering leadership at Derayah Finance, infrastructure at Meta.
-			</div>
-		</header>
+<head>
+	<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} structuredData={personSchema} ogType="profile" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
 
-		<nav class="nav">
-			<a href="/now">now</a>
-			<a href="/blog">writing</a>
-			<a href="https://calendar.app.google/JWpSBB15VvwmQUdA8" target="_blank">book a call</a>
-			<a href="mailto:raph@avae.ai">email</a>
-		</nav>
+<div class="sticky-header" id="stickyHeader">
+	<div class="sticky-inner">
+		<img src="/ajabruwal.png" alt="" class="sticky-avatar">
+		<span class="sticky-name">Rapheal Obodugo</span>
+	</div>
+</div>
 
-		<main>
+<main>
+	<header>
+		<img src="/ajabruwal.png" alt="" class="avatar">
+		<h1>Rapheal Obodugo</h1>
+		<p class="role">Founder of <a href="https://avae.ai" target="_blank" rel="noopener noreferrer">Avae</a></p>
+	</header>
 
-		<section class="reading-section">
-			<div class="reading-header">
-				<h2 class="reading-title" onclick="cycleReadingTitle()">currently reading</h2>
-				<span class="reading-status" onclick="cycleStatus()">{reading.complete} complete</span>
-			</div>
-			
-			<div class="book-container" onclick="bookClick()">
-				<div class="bookmark"></div>
-				
-				<div class="book-info">
-					<div class="book-cover" onclick="flipCover(event)"></div>
-					
-					<div class="book-details">
-						<div class="book-title" onclick="cycleBookTitle(event)">{reading.title}</div>
-						<div class="book-author" onclick="cycleAuthor(event)">{reading.author}</div>
-						<div class="reading-note" onclick="cycleNote(event)">"{reading.note}"</div>		
-					</div>
-				</div>
-				
-				<div class="last-read" onclick="cycleLastRead(event)">yesterday</div>
-			</div>
+	<section class="about">
+		<p>I'm building <a href="https://avae.ai" target="_blank" rel="noopener noreferrer">Avae</a>, an AI that handles tasks for you — booking travel, researching markets, managing your inbox, following up on things. We're in private beta with strong early traction.</p>
+		<p>Before this: built and exited <a href="https://mysub.africa" target="_blank" rel="noopener noreferrer">MySub</a> (360k users), led engineering at <a href="https://derayah.com" target="_blank" rel="noopener noreferrer">Derayah Finance</a>, worked on infra at <a href="https://meta.com" target="_blank" rel="noopener noreferrer">Meta</a>.</p>
+		<p>I spend a lot of time reading. Mostly history, philosophy, and biographies — I like understanding how people thought and why systems work the way they do. Sometimes fiction when I need to escape.</p>
+		<p>I write about building products, execution, and lessons from operating in emerging markets.</p>
+		<p>I occasionally advise early-stage startups on product and engineering. <a href="mailto:raph@avae.ai">Get in touch</a> if you're building something interesting.</p>
+	</section>
+
+	<section class="writing">
+		<h2>Essays</h2>
+		{essays.length > 0 && (
+			<a href={`/blog/${essays[0].slug}/`} class="featured">
+				<span class="featured-label">Latest</span>
+				<span class="featured-title">{essays[0].title}</span>
+			</a>
+		)}
+		{essays.slice(1).map((post) => (
+			<a href={`/blog/${post.slug}/`} class="post">
+				<span>{post.title}</span>
+				<time>{formatDate(post.date)}</time>
+			</a>
+		))}
+		<a href="/blog" class="more">All essays →</a>
+	</section>
+
+	{currentlyReading.length > 0 && (
+		<section class="reading">
+			<h2>Currently Reading</h2>
+			{currentlyReading.map((book) => (
+				<a href={book.link} class="book" target="_blank">
+					<span class="book-title">{book.title}</span>
+					<span class="book-author">{book.author}</span>
+				</a>
+			))}
 		</section>
+	)}
 
-		<section class="section">
-			<h2 class="section-title" onclick="cycleSectionTitle()">recent writing</h2>
-			<ul class="blog-list">
-				{posts.map((post) => (
-					<li class="blog-item">
-						<a href={`/blog/${post.slug}/`} class="blog-link">
-							<div class="blog-title">{post.title}</div>
-							<div class="blog-date">{formatDate(post.date)}</div>
-						</a>
-					</li>
-				))}
-			</ul>
-		</section>
+	<section class="links">
+		<a href="mailto:raph@avae.ai">Email</a>
+		<a href="https://twitter.com/thekofacts" target="_blank" rel="noopener noreferrer">Twitter</a>
+		<a href="https://linkedin.com/in/obodugo" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+		<a href="https://calendar.app.google/JWpSBB15VvwmQUdA8" target="_blank" rel="noopener noreferrer">Book a call</a>
+		<a href="/now">Now</a>
+	</section>
 
-		</main>
+	<footer>Lagos · Riyadh · London</footer>
+</main>
 
-		<footer class="footer" onclick="revealSecret()">
-			built with html and css
-		</footer>
-		</div>
+<style is:global>
+	* { margin: 0; padding: 0; box-sizing: border-box; }
+	
+	body {
+		font-family: 'Inter', system-ui, sans-serif;
+		background: #09090b;
+		color: #a1a1aa;
+		line-height: 1.65;
+		-webkit-font-smoothing: antialiased;
+	}
+	
+	main {
+		max-width: 520px;
+		margin: 0 auto;
+		padding: 80px 24px 100px;
+	}
+	
+	/* Header */
+	header {
+		margin-bottom: 48px;
+	}
+	
+	.avatar {
+		width: 64px;
+		height: 64px;
+		border-radius: 50%;
+		margin-bottom: 20px;
+		opacity: 0.95;
+		transition: box-shadow 0.3s ease;
+	}
+	
+	.avatar:hover {
+		box-shadow: 0 0 0 3px rgba(250, 250, 250, 0.1);
+	}
+	
+	h1 {
+		font-size: 20px;
+		font-weight: 600;
+		color: #fafafa;
+		letter-spacing: -0.02em;
+		margin-bottom: 4px;
+	}
+	
+	.role {
+		font-size: 15px;
+		color: #71717a;
+	}
+	
+	.role a {
+		color: #fafafa;
+		text-decoration: none;
+		border-bottom: 1px solid #3f3f46;
+		transition: border-color 0.2s;
+	}
+	
+	.role a:hover {
+		border-color: #71717a;
+	}
+	
+	.role a::after {
+		content: ' ↗';
+		font-size: 0.7em;
+		opacity: 0.5;
+	}
+	
+	/* About */
+	.about {
+		margin-bottom: 56px;
+	}
+	
+	.about p {
+		font-size: 15px;
+		margin-bottom: 16px;
+	}
+	
+	.about p:last-child {
+		margin-bottom: 0;
+	}
+	
+	.about strong {
+		color: #d4d4d8;
+		font-weight: 500;
+	}
+	
+	.about a {
+		color: #d4d4d8;
+		text-decoration: none;
+		border-bottom: 1px solid #3f3f46;
+		transition: border-color 0.2s;
+	}
+	
+	.about a:hover {
+		border-color: #71717a;
+	}
+	
+	.about a[href^="mailto"]::after,
+	.about a[href^="http"]::after {
+		content: ' ↗';
+		font-size: 0.75em;
+		opacity: 0.5;
+	}
+	
+	.about em {
+		color: #d4d4d8;
+		font-style: italic;
+	}
+	
+	/* Writing */
+	.writing {
+		margin-bottom: 56px;
+	}
+	
+	h2 {
+		font-size: 11px;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: #52525b;
+		margin-bottom: 20px;
+	}
+	
+	.featured {
+		display: block;
+		text-decoration: none;
+		padding: 16px;
+		margin: 0 -16px 16px;
+		background: #111113;
+		border-radius: 8px;
+		border: 1px solid #27272a;
+		transition: border-color 0.2s;
+	}
+	
+	.featured:hover {
+		border-color: #3f3f46;
+	}
+	
+	.featured-label {
+		display: block;
+		font-size: 10px;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: #52525b;
+		margin-bottom: 6px;
+	}
+	
+	.featured-title {
+		font-size: 16px;
+		color: #fafafa;
+		font-weight: 500;
+	}
+	
+	.post {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 16px;
+		padding: 12px 0;
+		text-decoration: none;
+		border-bottom: 1px solid #18181b;
+	}
+	
+	.post:last-of-type {
+		border-bottom: none;
+	}
+	
+	.post span {
+		font-size: 14px;
+		color: #d4d4d8;
+		transition: color 0.2s;
+	}
+	
+	.post:hover span {
+		color: #fafafa;
+	}
+	
+	.post time {
+		font-size: 13px;
+		color: #3f3f46;
+		flex-shrink: 0;
+	}
+	
+	.more {
+		display: inline-block;
+		margin-top: 16px;
+		font-size: 13px;
+		color: #52525b;
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+	
+	.more:hover {
+		color: #71717a;
+	}
+	
+	/* Reading */
+	.reading {
+		margin-bottom: 56px;
+	}
+	
+	.book {
+		display: block;
+		text-decoration: none;
+		padding: 10px 0;
+		border-bottom: 1px solid #18181b;
+	}
+	
+	.book:last-of-type {
+		border-bottom: none;
+	}
+	
+	.book-title {
+		display: block;
+		font-size: 14px;
+		color: #d4d4d8;
+		transition: color 0.2s;
+	}
+	
+	.book-title::after {
+		content: ' ↗';
+		font-size: 0.7em;
+		opacity: 0.4;
+	}
+	
+	.book:hover .book-title {
+		color: #fafafa;
+	}
+	
+	.book-author {
+		font-size: 13px;
+		color: #52525b;
+	}
+	
+	/* Links */
+	.links {
+		display: flex;
+		gap: 20px;
+		flex-wrap: wrap;
+		margin-bottom: 64px;
+	}
+	
+	.links a {
+		font-size: 13px;
+		color: #52525b;
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+	
+	.links a:hover {
+		color: #a1a1aa;
+	}
+	
+	.links a[href^="http"]::after,
+	.links a[href^="mailto"]::after {
+		content: ' ↗';
+		font-size: 0.7em;
+		opacity: 0.4;
+	}
+	
+	/* Footer */
+	footer {
+		font-size: 12px;
+		color: #27272a;
+	}
+	
+	/* Sticky Header */
+	.sticky-header {
+		position: fixed;
+		top: 16px;
+		left: 50%;
+		transform: translateX(-50%) translateY(-60px);
+		max-width: 520px;
+		width: calc(100% - 48px);
+		background: rgba(9, 9, 11, 0.85);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(39, 39, 42, 0.5);
+		border-radius: 12px;
+		opacity: 0;
+		transition: 
+			transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+			opacity 0.4s ease-out;
+		z-index: 1000;
+	}
+	
+	.sticky-header.visible {
+		transform: translateX(-50%) translateY(0);
+		opacity: 1;
+	}
+	
+	.sticky-inner {
+		padding: 12px 20px;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+	
+	.sticky-avatar {
+		width: 28px;
+		height: 28px;
+		border-radius: 50%;
+		opacity: 0.95;
+		transition: transform 0.3s ease;
+	}
+	
+	.sticky-header:hover .sticky-avatar {
+		transform: scale(1.05);
+	}
+	
+	.sticky-name {
+		font-size: 14px;
+		font-weight: 500;
+		color: #fafafa;
+	}
+	
+	/* Mobile */
+	@media (max-width: 520px) {
+		main { padding: 48px 20px 64px; }
+		.post { flex-direction: column; gap: 4px; }
+		.sticky-header { padding: 10px 16px; }
+	}
+</style>
 
-		<script>
-			// Existing code
-			const titles = ['builder', 'maker', 'creator', 'procrastinator', 'caffeine converter', 'digital nomad wannabe', 'startup survivor'];
-			let currentIndex = 0;
-			
-			function cycleTitle() {
-				currentIndex = (currentIndex + 1) % titles.length;
-				document.querySelector('.subtitle').textContent = titles[currentIndex];
+<script>
+	const header = document.querySelector('header');
+	const stickyHeader = document.getElementById('stickyHeader');
+	
+	const observer = new IntersectionObserver(
+		([entry]) => {
+			if (!entry.isIntersecting) {
+				stickyHeader.classList.add('visible');
+			} else {
+				stickyHeader.classList.remove('visible');
 			}
-			
-			let clickCount = 0;
-			function revealSecret() {
-				clickCount++;
-				const footer = document.querySelector('.footer');
-				
-				if (clickCount === 1) {
-					footer.textContent = 'built with blood, sweat, and stackoverflow';
-				} else if (clickCount === 2) {
-					footer.textContent = 'actually just astro and substack rss (and 47 cups of coffee)';
-				} else if (clickCount === 3) {
-					footer.textContent = 'ok fine, i used chatgpt for the animations';
-				} else if (clickCount === 4) {
-					footer.textContent = 'stop clicking me';
-				} else {
-					footer.textContent = 'seriously, there are no more easter eggs';
-					clickCount = 0;
-				}
-			}
+		},
+		{ threshold: 0, rootMargin: '-80px 0px 0px 0px' }
+	);
+	
+	if (header) observer.observe(header);
+</script>
 
-			// New easter eggs
-			const bios = [
-				'i turn questions into products. everything else is noise.',
-				'i write code and pretend it\'s art. three failed startups and counting. optimistically pessimistic.',
-				'professional yak shaver. expert in reinventing wheels. ask me about my 47 unfinished side projects.',
-				'turning coffee into questionable business decisions since 2019. still figuring it out.',
-				'building things nobody asked for but hopefully someone needs. chronic overthinker.'
-			];
-			let bioIndex = 0;
-			
-			function cycleBio() {
-				bioIndex = (bioIndex + 1) % bios.length;
-				document.querySelector('.bio').innerHTML = bios[bioIndex];
-			}
-
-			const sectionTitles = ['recent writing', 'stuff i wrote', 'brain dumps', 'thoughts & regrets', 'digital diary'];
-			let sectionIndex = 0;
-			
-			function cycleSectionTitle() {
-				sectionIndex = (sectionIndex + 1) % sectionTitles.length;
-				document.querySelector('.section-title').textContent = sectionTitles[sectionIndex];
-			}
-
-			let nameClicks = 0;
-			function nameClick() {
-				nameClicks++;
-				const name = document.querySelector('h1');
-				
-				if (nameClicks === 5) {
-					name.textContent = 'rapheal "definitely not an ai" obodugo';
-				} else if (nameClicks === 10) {
-					name.textContent = 'r4ph34l 0b0dug0';
-					name.style.fontFamily = 'Comic Sans MS, cursive';
-				} else if (nameClicks === 15) {
-					name.textContent = 'rapheal obodugo (my actual name)';
-					name.style.fontFamily = '';
-				} else if (nameClicks === 20) {
-					name.textContent = 'rapheal obodugo';
-					document.body.classList.add('secret-mode');
-					setTimeout(() => document.body.classList.remove('secret-mode'), 3000);
-					nameClicks = 0;
-				}
-			}
-
-			// Photo easter egg
-			let photoClicks = 0;
-			function photoClick() {
-				photoClicks++;
-				const photo = document.querySelector('.profile-photo');
-				
-				if (photoClicks === 3) {
-					photo.style.transform = 'rotate(180deg)';
-				} else if (photoClicks === 5) {
-					photo.style.transform = 'rotate(360deg) scale(1.5)';
-				} else if (photoClicks === 7) {
-					photo.style.borderRadius = '0';
-					photo.style.transform = 'rotate(45deg)';
-				} else if (photoClicks === 10) {
-					photo.style.filter = 'grayscale(100%)';
-				} else if (photoClicks === 15) {
-					photo.style.transform = '';
-					photo.style.borderRadius = '';
-					photo.style.filter = '';
-					photoClicks = 0;
-				}
-			}
-
-			// Konami code easter egg
-			const konamiCode = [
-				'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
-				'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
-				'KeyB', 'KeyA'
-			];
-			let konamiIndex = 0;
-			
-			document.addEventListener('keydown', function(e) {
-				if (e.code === konamiCode[konamiIndex]) {
-					konamiIndex++;
-					if (konamiIndex === konamiCode.length) {
-						document.body.classList.add('konami-mode');
-						document.querySelector('h1').textContent = '🕹️ achievement unlocked: konami master';
-						setTimeout(() => {
-							document.querySelector('h1').textContent = 'obodugo';
-							document.body.classList.remove('konami-mode');
-						}, 2000);
-						konamiIndex = 0;
-					}
-				} else {
-					konamiIndex = 0;
-				}
-			});
-
-			// Secret typing easter egg
-			let secretBuffer = '';
-			document.addEventListener('keypress', function(e) {
-				secretBuffer += e.key;
-				if (secretBuffer.length > 10) {
-					secretBuffer = secretBuffer.slice(-10);
-				}
-				
-				if (secretBuffer.includes('hello')) {
-					document.querySelector('.bio').innerHTML = '👋 oh hey there! you found the secret. i see you.';
-					secretBuffer = '';
-				}
-				
-				if (secretBuffer.includes('coffee')) {
-					document.querySelector('h1').textContent = '☕ obodugo "caffeinated" rapheal';
-					setTimeout(() => document.querySelector('h1').textContent = 'obodugo', 3000);
-					secretBuffer = '';
-				}
-			});
-
-			// Time-based easter egg
-			const hour = new Date().getHours();
-			if (hour < 6 || hour > 22) {
-				document.querySelector('.subtitle').textContent = 'insomniac';
-			}
-
-			// Reading section interactions
-			const readingTitles = ['currently reading', 'obsessing over', 'slowly digesting', 'pretending to read', 'actually enjoying'];
-			let readingTitleIndex = 0;
-			
-			function cycleReadingTitle() {
-				readingTitleIndex = (readingTitleIndex + 1) % readingTitles.length;
-				document.querySelector('.reading-title').textContent = readingTitles[readingTitleIndex];
-			}
-
-			const statuses = ['34% complete', 'making progress', 'stuck on chapter 4', 'procrastinating', 'mind blown'];
-			let statusIndex = 0;
-			
-			function cycleStatus() {
-				statusIndex = (statusIndex + 1) % statuses.length;
-				document.querySelector('.reading-status').textContent = statuses[statusIndex];
-			}
-
-			const bookTitles = ['The Design of Everyday Things', 'How to Make Doors Less Confusing', 'Why Everything is Broken', 'Design for Humans 101'];
-			let bookTitleIndex = 0;
-			
-			function cycleBookTitle(e) {
-				e.stopPropagation();
-				bookTitleIndex = (bookTitleIndex + 1) % bookTitles.length;
-				document.querySelector('.book-title').textContent = bookTitles[bookTitleIndex];
-			}
-
-			const authors = ['Donald A. Norman', 'Don Norman', 'The Door Guy', 'UX Legend'];
-			let authorIndex = 0;
-			
-			function cycleAuthor(e) {
-				e.stopPropagation();
-				authorIndex = (authorIndex + 1) % authors.length;
-				document.querySelector('.book-author').textContent = authors[authorIndex];
-			}
-
-			const progressTexts = [
-				{ left: 'page 156 of 368', right: '2 weeks left' },
-				{ left: '42% done', right: 'forever to go' },
-				{ left: 'chapter 6 of 12', right: 'getting there' },
-				{ left: 'halfway through', right: 'ish' }
-			];
-			let progressIndex = 0;
-			
-			function cycleProgressText(e) {
-				e.stopPropagation();
-				progressIndex = (progressIndex + 1) % progressTexts.length;
-				const spans = document.querySelectorAll('.progress-text span');
-				spans[0].textContent = progressTexts[progressIndex].left;
-				spans[1].textContent = progressTexts[progressIndex].right;
-			}
-
-			const notes = [
-				'"finally understanding why doors confuse me so much"',
-				'"this explains everything wrong with my coffee maker"',
-				'"taking notes on every terrible interface"',
-				'"now i notice bad design everywhere"',
-				'"becoming insufferable about door handles"'
-			];
-			let noteIndex = 0;
-			
-			function cycleNote(e) {
-				e.stopPropagation();
-				noteIndex = (noteIndex + 1) % notes.length;
-				document.querySelector('.reading-note').textContent = notes[noteIndex];
-			}
-
-			const lastReads = ['yesterday', 'this morning', '3 days ago', 'last week', 'sometime recently'];
-			let lastReadIndex = 0;
-			
-			function cycleLastRead(e) {
-				e.stopPropagation();
-				lastReadIndex = (lastReadIndex + 1) % lastReads.length;
-				document.querySelector('.last-read').textContent = lastReads[lastReadIndex];
-			}
-
-			function flipCover(e) {
-				e.stopPropagation();
-				const cover = document.querySelector('.book-cover');
-				cover.classList.add('flipping');
-				setTimeout(() => cover.classList.remove('flipping'), 600);
-			}
-
-			function updateProgress(e) {
-				e.stopPropagation();
-				const progressFill = document.querySelector('.progress-fill');
-				const rect = e.currentTarget.getBoundingClientRect();
-				const x = e.clientX - rect.left;
-				const percentage = Math.min(Math.max((x / rect.width) * 100, 5), 95);
-				progressFill.style.width = percentage + '%';
-			}
-
-			function bookClick() {
-				const container = document.querySelector('.book-container');
-				container.style.transform = 'scale(0.98)';
-				setTimeout(() => {
-					container.style.transform = '';
-				}, 150);
-			}
-
-			// Random gradient for book cover
-			const gradients = [
-				'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-				'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-				'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-				'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-				'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-			];
-			
-			setInterval(() => {
-				const cover = document.querySelector('.book-cover');
-				if (cover) {
-					const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
-					cover.style.background = randomGradient;
-				}
-			}, 8000);
-		</script>
-	</body>
+</body>
 </html>
