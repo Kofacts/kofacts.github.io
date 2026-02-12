@@ -1,22 +1,35 @@
 import { slugify } from './slugify.js';
 import { existsSync, readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
 const RSS_URL = 'https://obodugo.substack.com/feed';
 const LOCAL_FEED = '/tmp/substack-feed.xml';
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const COMMITTED_FEED = join(__dirname, '../data/substack-feed.xml');
 
-export async function fetchRSSPosts() {
-  let xml;
-
-  // Try local file first (pre-fetched by prebuild script)
+function loadFeed() {
+  // 1. Try fresh pre-fetched copy (from local prebuild curl)
   if (existsSync(LOCAL_FEED)) {
     const content = readFileSync(LOCAL_FEED, 'utf-8');
     if (content.includes('<item>')) {
       console.log('[RSS] Using pre-fetched feed from', LOCAL_FEED);
-      xml = content;
-    } else {
-      console.log('[RSS] Pre-fetched feed is invalid, fetching directly...');
+      return content;
     }
+    console.log('[RSS] Pre-fetched feed is invalid, trying committed copy...');
   }
+
+  // 2. Fall back to committed copy in repo (always works on CI)
+  if (existsSync(COMMITTED_FEED)) {
+    console.log('[RSS] Using committed feed from repo');
+    return readFileSync(COMMITTED_FEED, 'utf-8');
+  }
+
+  return null;
+}
+
+export async function fetchRSSPosts() {
+  let xml = loadFeed();
 
   if (!xml) {
     console.log('[RSS] Fetching fresh data from Substack...');

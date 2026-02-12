@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "curl -sL -A 'Mozilla/5.0 (compatible; StaticSiteGenerator/1.0)' https://obodugo.substack.com/feed -o /tmp/substack-feed.xml",
+    "prebuild": "curl -sL -A 'Mozilla/5.0 (compatible; StaticSiteGenerator/1.0)' https://obodugo.substack.com/feed -o /tmp/substack-feed.xml && cp /tmp/substack-feed.xml src/data/substack-feed.xml 2>/dev/null || true",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
