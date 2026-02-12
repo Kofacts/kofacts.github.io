@@ -8,5 +8,4 @@ export default defineConfig({
 	site: 'https://obodugo.online/',
 	integrations: [mdx(), sitemap()],
 	output: 'static',
-	outDir: 'docs',
 });
