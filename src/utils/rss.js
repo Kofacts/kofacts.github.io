@@ -7,7 +7,7 @@ const LOCAL_FEED = '/tmp/substack-feed.xml';
 
 export async function fetchRSSPosts() {
   let xml;
-  
+
   // Try local file first (pre-fetched)
   if (existsSync(LOCAL_FEED)) {
     console.log('[RSS] Using pre-fetched feed from', LOCAL_FEED);
@@ -18,12 +18,12 @@ export async function fetchRSSPosts() {
     xml = await response.text();
   }
 
-  const json = await parseStringPromise(xml);
+  const json = await parseStringPromise(xml, { strict: false, normalizeTags: true });
 
   const posts = json.rss.channel[0].item.map((item) => ({
     title: item.title[0],
     link: item.link[0],
-    date: item.pubDate[0],
+    date: item.pubdate[0],
     slug: slugify(item.title[0]),
     description: item.description ? item.description[0] : '',
     content: item['content:encoded'] ? item['content:encoded'][0] : '',
