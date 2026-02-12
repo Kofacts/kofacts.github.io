@@ -3,42 +3,42 @@ import { existsSync, readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-const RSS_URL = 'https://obodugo.substack.com/feed';
-const LOCAL_FEED = '/tmp/substack-feed.xml';
+const SUBSTACK_URL = 'https://obodugo.substack.com/feed';
+const RSS2JSON_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(SUBSTACK_URL)}`;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const COMMITTED_FEED = join(__dirname, '../data/substack-feed.xml');
 
-function loadFeed() {
-  // 1. Try fresh pre-fetched copy (from local prebuild curl)
-  if (existsSync(LOCAL_FEED)) {
-    const content = readFileSync(LOCAL_FEED, 'utf-8');
-    if (content.includes('<item>')) {
-      console.log('[RSS] Using pre-fetched feed from', LOCAL_FEED);
-      return content;
+export async function fetchRSSPosts() {
+  // 1. Try rss2json API (works from any IP, including GitHub CI)
+  try {
+    console.log('[RSS] Fetching via rss2json proxy...');
+    const response = await fetch(RSS2JSON_URL);
+    const data = await response.json();
+
+    if (data.status === 'ok' && data.items?.length > 0) {
+      console.log(`[RSS] Got ${data.items.length} posts from rss2json`);
+      return data.items.map((item) => ({
+        title: item.title,
+        link: item.link,
+        date: item.pubDate,
+        slug: slugify(item.title),
+        description: item.description || '',
+        content: item.content || '',
+      }));
     }
-    console.log('[RSS] Pre-fetched feed is invalid, trying committed copy...');
+  } catch (err) {
+    console.log('[RSS] rss2json failed:', err.message);
   }
 
-  // 2. Fall back to committed copy in repo (always works on CI)
-  if (existsSync(COMMITTED_FEED)) {
-    console.log('[RSS] Using committed feed from repo');
-    return readFileSync(COMMITTED_FEED, 'utf-8');
-  }
-
-  return null;
+  // 2. Fallback: parse committed XML feed
+  console.log('[RSS] Falling back to committed feed...');
+  return parseXmlFeed(COMMITTED_FEED);
 }
 
-export async function fetchRSSPosts() {
-  let xml = loadFeed();
+function parseXmlFeed(filePath) {
+  if (!existsSync(filePath)) return [];
 
-  if (!xml) {
-    console.log('[RSS] Fetching fresh data from Substack...');
-    const response = await fetch(RSS_URL, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; StaticSiteGenerator/1.0)' },
-    });
-    xml = await response.text();
-  }
-
+  const xml = readFileSync(filePath, 'utf-8');
   const posts = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
   let match;
@@ -67,3 +67,4 @@ export async function fetchRSSPosts() {
 
   return posts;
 }
+
