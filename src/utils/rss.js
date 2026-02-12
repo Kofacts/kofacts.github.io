@@ -1,4 +1,3 @@
-import { parseStringPromise } from 'xml2js';
 import { slugify } from './slugify.js';
 import { existsSync, readFileSync } from 'fs';
 
@@ -8,7 +7,7 @@ const LOCAL_FEED = '/tmp/substack-feed.xml';
 export async function fetchRSSPosts() {
   let xml;
 
-  // Try local file first (pre-fetched)
+  // Try local file first (pre-fetched by prebuild script)
   if (existsSync(LOCAL_FEED)) {
     console.log('[RSS] Using pre-fetched feed from', LOCAL_FEED);
     xml = readFileSync(LOCAL_FEED, 'utf-8');
@@ -18,17 +17,31 @@ export async function fetchRSSPosts() {
     xml = await response.text();
   }
 
-  const json = await parseStringPromise(xml, { strict: false, normalizeTags: true });
+  const posts = [];
+  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  let match;
 
-  const posts = json.rss.channel[0].item.map((item) => ({
-    title: item.title[0],
-    link: item.link[0],
-    date: item.pubdate[0],
-    slug: slugify(item.title[0]),
-    description: item.description ? item.description[0] : '',
-    content: item['content:encoded'] ? item['content:encoded'][0] : '',
-  }));
+  while ((match = itemRegex.exec(xml)) !== null) {
+    const item = match[1];
+
+    const getTag = (tag) => {
+      const regex = new RegExp(`<${tag}>(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?<\\/${tag}>`);
+      const m = item.match(regex);
+      return m ? m[1].trim() : '';
+    };
+
+    const title = getTag('title');
+    if (!title) continue;
+
+    posts.push({
+      title,
+      link: getTag('link'),
+      date: getTag('pubDate'),
+      slug: slugify(title),
+      description: getTag('description'),
+      content: getTag('content:encoded'),
+    });
+  }
 
   return posts;
 }
-
