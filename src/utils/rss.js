@@ -9,11 +9,20 @@ export async function fetchRSSPosts() {
 
   // Try local file first (pre-fetched by prebuild script)
   if (existsSync(LOCAL_FEED)) {
-    console.log('[RSS] Using pre-fetched feed from', LOCAL_FEED);
-    xml = readFileSync(LOCAL_FEED, 'utf-8');
-  } else {
+    const content = readFileSync(LOCAL_FEED, 'utf-8');
+    if (content.includes('<item>')) {
+      console.log('[RSS] Using pre-fetched feed from', LOCAL_FEED);
+      xml = content;
+    } else {
+      console.log('[RSS] Pre-fetched feed is invalid, fetching directly...');
+    }
+  }
+
+  if (!xml) {
     console.log('[RSS] Fetching fresh data from Substack...');
-    const response = await fetch(RSS_URL);
+    const response = await fetch(RSS_URL, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; StaticSiteGenerator/1.0)' },
+    });
     xml = await response.text();
   }
 
