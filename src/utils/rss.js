@@ -1,11 +1,9 @@
 import { slugify } from './slugify.js';
 import { existsSync, readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { join } from 'path';
 
 const SUBSTACK_URL = 'https://obodugo.substack.com/feed';
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const COMMITTED_FEED = join(__dirname, '../data/substack-feed.xml');
+const COMMITTED_FEED = join(process.cwd(), 'src/data/substack-feed.xml');
 
 const BROWSER_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
