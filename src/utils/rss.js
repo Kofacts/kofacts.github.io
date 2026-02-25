@@ -8,10 +8,30 @@ const RSS2JSON_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURICo
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const COMMITTED_FEED = join(__dirname, '../data/substack-feed.xml');
 
+const BROWSER_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
 export async function fetchRSSPosts() {
-  // 1. Try rss2json API (works from any IP, including GitHub CI)
+  // 1. Try direct Substack fetch (freshest data, works locally + most CI)
   try {
-    console.log('[RSS] Fetching via rss2json proxy...');
+    console.log('[RSS] Fetching directly from Substack...');
+    const response = await fetch(SUBSTACK_URL, {
+      headers: { 'User-Agent': BROWSER_UA },
+    });
+    const xml = await response.text();
+
+    if (xml.includes('<item>')) {
+      const posts = parseXml(xml);
+      console.log(`[RSS] Got ${posts.length} posts from Substack`);
+      return posts;
+    }
+    console.log('[RSS] Direct fetch returned non-RSS response');
+  } catch (err) {
+    console.log('[RSS] Direct fetch failed:', err.message);
+  }
+
+  // 2. Try rss2json proxy (works when Substack blocks the IP)
+  try {
+    console.log('[RSS] Trying rss2json proxy...');
     const response = await fetch(RSS2JSON_URL);
     const data = await response.json();
 
@@ -30,15 +50,16 @@ export async function fetchRSSPosts() {
     console.log('[RSS] rss2json failed:', err.message);
   }
 
-  // 2. Fallback: parse committed XML feed
+  // 3. Last resort: committed XML feed
   console.log('[RSS] Falling back to committed feed...');
-  return parseXmlFeed(COMMITTED_FEED);
+  if (existsSync(COMMITTED_FEED)) {
+    return parseXml(readFileSync(COMMITTED_FEED, 'utf-8'));
+  }
+
+  return [];
 }
 
-function parseXmlFeed(filePath) {
-  if (!existsSync(filePath)) return [];
-
-  const xml = readFileSync(filePath, 'utf-8');
+function parseXml(xml) {
   const posts = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
   let match;
