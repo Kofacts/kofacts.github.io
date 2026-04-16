@@ -52,11 +52,12 @@ const personSchema = {
 	</header>
 
 	<section class="about animate-section" style="--delay: 1">
-		<p>I'm building <a href="https://avae.ai" target="_blank" rel="noopener noreferrer">Avae</a>, an AI that handles tasks for you — booking travel, researching markets, managing your inbox, following up on things. We're in private beta with strong early traction.</p>
-		<p>Before this: built and exited <a href="https://mysub.africa" target="_blank" rel="noopener noreferrer">MySub</a> (360k users), led engineering at <a href="https://derayah.com" target="_blank" rel="noopener noreferrer">Derayah Finance</a>, worked on infra at <a href="https://meta.com" target="_blank" rel="noopener noreferrer">Meta</a>.</p>
-		<p>I spend a lot of time reading. Mostly history, philosophy, and biographies — I like understanding how people thought and why systems work the way they do. Sometimes fiction when I need to escape.</p>
-		<p>I write about building products, execution, and lessons from operating in emerging markets.</p>
-		<p>I occasionally advise early-stage startups on product and engineering. <a href="mailto:raph@avae.ai">Get in touch</a> if you're building something interesting.</p>
+		<p>I am building <a href="https://avae.ai" target="_blank" rel="noopener noreferrer">Avae</a>, an applied research and engineering company focused on continuous audit for modern finance. We build systems that can reliably reason over financial data, ensuring that numbers are not merely available, but verifiably correct.</p>
+		<p>Modern financial workflows still rely heavily on manual reconciliation, disparate spreadsheets, and brittle logic. As these systems scale, ensuring absolute correctness becomes increasingly difficult. Avae exists to solve this problem at its root by building deterministic systems capable of processing large-scale financial data, detecting structural inconsistencies, and explaining outcomes with absolute precision.</p>
+		<p>Prior to this, I built and exited <a href="https://mysub.africa" target="_blank" rel="noopener noreferrer">MySub</a> (360k users), led engineering at <a href="https://derayah.com" target="_blank" rel="noopener noreferrer">Derayah Finance</a>, and worked on infrastructure at <a href="https://meta.com" target="_blank" rel="noopener noreferrer">Meta</a>.</p>
+		<p>I spend a lot of time reading mostly history, philosophy, and biographies. I enjoy understanding how exceptional people thought and why complex systems work the way they do. Occasionally, I turn to fiction when I need the space to escape.</p>
+		<p>I write about the mechanics of building products, the art of execution, and the unique lessons that come from operating in emerging markets.</p>
+		<p>I also advise early-stage startups on product strategy and engineering. <a href="mailto:raph@avae.ai">Get in touch</a> if you are building something genuinely interesting.</p>
 	</section>
 
 	<section class="writing animate-section" style="--delay: 2">
@@ -543,7 +544,6 @@ const personSchema = {
 	
 	.books-grid {
 		display: flex;
-		flex-wrap: wrap;
 		gap: 24px;
 		margin-top: 16px;
 	}
@@ -553,6 +553,8 @@ const personSchema = {
 		flex-direction: column;
 		gap: 10px;
 		text-decoration: none;
+		flex: 1 1 0;
+		min-width: 0;
 		max-width: 160px;
 		perspective: 800px;
 	}
