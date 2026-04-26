@@ -3,9 +3,9 @@
  * Called at build-time only (Astro frontmatter / static output).
  */
 
-const CLOUD_NAME = import.meta.env.CLOUDINARY_CLOUD_NAME;
-const API_KEY = import.meta.env.CLOUDINARY_API_KEY;
-const API_SECRET = import.meta.env.CLOUDINARY_API_SECRET;
+const CLOUD_NAME = import.meta.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME;
+const API_KEY = import.meta.env.CLOUDINARY_API_KEY || process.env.CLOUDINARY_API_KEY;
+const API_SECRET = import.meta.env.CLOUDINARY_API_SECRET || process.env.CLOUDINARY_API_SECRET;
 
 /**
  * @param {string} folder - Cloudinary folder name, e.g. "kigali"
