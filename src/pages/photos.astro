@@ -1,0 +1,461 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import { SITE_TITLE } from '../consts';
+import { fetchCloudinaryPhotos } from '../utils/cloudinary.js';
+
+const photos = await fetchCloudinaryPhotos('blog-photos');
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+	<BaseHead title={`Photos · ${SITE_TITLE}`} description="Photography by Rapheal Obodugo" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<main>
+	<a href="/" class="profile-link">
+		<span class="back-arrow">←</span>
+		<img src="/ajabruwal.png" alt="" class="mini-avatar">
+		<span class="mini-name">Rapheal Obodugo</span>
+	</a>
+	
+	<header>
+		<div class="header-top">
+			<h1>Photos</h1>
+			<a href="https://instagram.com/h005y" target="_blank" rel="noopener noreferrer" class="ig-link">@h005y</a>
+		</div>
+		<p class="subtitle">Things I see, places I go</p>
+		<p class="camera">Shot on Fujifilm X100VI</p>
+	</header>
+
+	{photos.length > 0 ? (
+		<section class="gallery" id="gallery">
+			{photos.map((photo, i) => (
+				<button
+					class="gallery-item"
+					data-full={photo.full}
+					data-alt={photo.alt}
+					data-index={i}
+					type="button"
+				>
+					<img
+						src={photo.src}
+						alt={photo.alt}
+						width={photo.width}
+						height={photo.height}
+						loading={i < 4 ? 'eager' : 'lazy'}
+						decoding="async"
+					/>
+				</button>
+			))}
+		</section>
+	) : (
+		<p class="empty">Photos coming soon.</p>
+	)}
+
+	<footer>
+		{photos.length} photos
+	</footer>
+</main>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+	<button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close">×</button>
+	<a href="#" class="lightbox-download" id="lightboxDownload" aria-label="Download photo" title="Download High-Res">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+			<polyline points="7 10 12 15 17 10"></polyline>
+			<line x1="12" y1="15" x2="12" y2="3"></line>
+		</svg>
+	</a>
+	<button class="lightbox-nav lightbox-prev" id="lightboxPrev" type="button" aria-label="Previous photo">‹</button>
+	<button class="lightbox-nav lightbox-next" id="lightboxNext" type="button" aria-label="Next photo">›</button>
+	<div class="lightbox-img-wrap">
+		<img class="lightbox-img" id="lightboxImg" src="" alt="" />
+	</div>
+	<p class="lightbox-caption" id="lightboxCaption"></p>
+</div>
+
+<style is:global>
+	* { margin: 0; padding: 0; box-sizing: border-box; }
+	
+	body {
+		font-family: 'Inter', system-ui, sans-serif;
+		background: #09090b;
+		color: #a1a1aa;
+		line-height: 1.65;
+		-webkit-font-smoothing: antialiased;
+	}
+	
+	main {
+		max-width: 520px;
+		margin: 0 auto;
+		padding: 80px 24px 100px;
+	}
+	
+	/* Back link */
+	.profile-link {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		text-decoration: none;
+		margin-bottom: 40px;
+	}
+	
+	.back-arrow {
+		font-size: 14px;
+		color: #52525b;
+		transition: transform 0.2s, color 0.2s;
+	}
+	
+	.profile-link:hover .back-arrow {
+		transform: translateX(-3px);
+		color: #71717a;
+	}
+	
+	.mini-avatar {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		opacity: 0.9;
+	}
+	
+	.mini-name {
+		font-size: 14px;
+		color: #71717a;
+		transition: color 0.2s;
+	}
+	
+	.profile-link:hover .mini-name {
+		color: #a1a1aa;
+	}
+	
+	/* Header */
+	header {
+		margin-bottom: 40px;
+	}
+	
+	.header-top {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: 4px;
+	}
+
+	h1 {
+		font-size: 20px;
+		font-weight: 600;
+		color: #fafafa;
+		letter-spacing: -0.02em;
+	}
+
+	.ig-link {
+		font-size: 13px;
+		color: #71717a;
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+
+	.ig-link:hover {
+		color: #fafafa;
+	}
+	
+	.subtitle {
+		font-size: 15px;
+		color: #71717a;
+	}
+
+	.camera {
+		font-size: 12px;
+		color: #3f3f46;
+		margin-top: 6px;
+		letter-spacing: 0.02em;
+	}
+	
+	/* Gallery grid */
+	.gallery {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		grid-auto-flow: dense;
+		gap: 12px;
+		margin-bottom: 80px;
+	}
+
+	.gallery-item {
+		display: block;
+		border: none;
+		background: none;
+		padding: 0;
+		cursor: pointer;
+		border-radius: 4px;
+		overflow: hidden;
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	/* Asymmetrical Grid: 2/3 and 1/3 splits. No full width. */
+	.gallery-item:nth-child(4n+1) {
+		grid-column: span 2;
+	}
+
+	.gallery-item:nth-child(4n+2) {
+		grid-column: span 1;
+	}
+
+	.gallery-item:nth-child(4n+3) {
+		grid-column: span 1;
+	}
+
+	.gallery-item:nth-child(4n+4) {
+		grid-column: span 2;
+	}
+
+	.gallery-item img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		aspect-ratio: 1; /* Gives a nice consistent baseline before grid stretching */
+		border-radius: 4px;
+		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+		filter: brightness(0.92) contrast(1.02);
+	}
+
+	.gallery-item:hover img {
+		transform: scale(1.03);
+		filter: brightness(1) contrast(1);
+	}
+
+	.gallery-item::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 4px;
+		border: 1px solid rgba(255, 255, 255, 0.04);
+		pointer-events: none;
+		transition: border-color 0.3s;
+	}
+
+	.gallery-item:hover::after {
+		border-color: rgba(255, 255, 255, 0.1);
+	}
+
+	.empty {
+		font-size: 14px;
+		color: #3f3f46;
+		text-align: center;
+		padding: 64px 0;
+	}
+
+	/* Footer */
+	footer {
+		padding-top: 32px;
+		border-top: 1px solid #18181b;
+		font-size: 12px;
+		color: #27272a;
+	}
+
+	/* ─── Lightbox ─── */
+	.lightbox {
+		position: fixed;
+		inset: 0;
+		z-index: 10000;
+		background: rgba(0, 0, 0, 0.95);
+		backdrop-filter: blur(24px);
+		-webkit-backdrop-filter: blur(24px);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.3s ease;
+	}
+
+	.lightbox.open {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.lightbox-close {
+		position: absolute;
+		top: 20px;
+		right: 24px;
+		background: none;
+		border: none;
+		color: #71717a;
+		font-size: 28px;
+		cursor: pointer;
+		width: 44px;
+		height: 44px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: color 0.2s;
+		z-index: 2;
+	}
+
+	.lightbox-close:hover {
+		color: #fafafa;
+	}
+
+	.lightbox-download {
+		position: absolute;
+		top: 20px;
+		right: 76px;
+		color: #71717a;
+		width: 44px;
+		height: 44px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: color 0.2s;
+		z-index: 2;
+	}
+
+	.lightbox-download:hover {
+		color: #fafafa;
+	}
+
+	.lightbox-nav {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		background: none;
+		border: none;
+		color: #52525b;
+		font-size: 36px;
+		cursor: pointer;
+		width: 56px;
+		height: 56px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: color 0.2s;
+		z-index: 2;
+	}
+
+	.lightbox-nav:hover {
+		color: #fafafa;
+	}
+
+	.lightbox-prev { left: 12px; }
+	.lightbox-next { right: 12px; }
+
+	.lightbox-img-wrap {
+		max-width: 90vw;
+		max-height: 80vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.lightbox-img {
+		max-width: 100%;
+		max-height: 80vh;
+		object-fit: contain;
+		border-radius: 4px;
+		opacity: 0;
+		transform: scale(0.96);
+		transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.lightbox.open .lightbox-img {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	.lightbox-caption {
+		margin-top: 16px;
+		font-size: 13px;
+		color: #52525b;
+		text-align: center;
+		max-width: 400px;
+	}
+
+	/* Mobile */
+	@media (max-width: 520px) {
+		main { padding: 48px 20px 64px; }
+		.gallery { gap: 12px; }
+		.lightbox-nav { display: none; }
+		.lightbox-download { right: 64px; }
+	}
+</style>
+
+<script>
+	const gallery = document.getElementById('gallery');
+	const lightbox = document.getElementById('lightbox');
+	const lightboxImg = document.getElementById('lightboxImg') as HTMLImageElement;
+	const lightboxCaption = document.getElementById('lightboxCaption');
+	const lightboxClose = document.getElementById('lightboxClose');
+	const lightboxDownload = document.getElementById('lightboxDownload') as HTMLAnchorElement;
+	const lightboxPrev = document.getElementById('lightboxPrev');
+	const lightboxNext = document.getElementById('lightboxNext');
+
+	const items = Array.from(gallery?.querySelectorAll('.gallery-item') || []) as HTMLButtonElement[];
+	let currentIndex = 0;
+
+	function openLightbox(index: number) {
+		const item = items[index];
+		if (!item) return;
+		currentIndex = index;
+		const full = item.dataset.full || '';
+		const alt = item.dataset.alt || '';
+		if (lightboxImg) {
+			lightboxImg.src = full;
+			lightboxImg.alt = alt;
+		}
+		if (lightboxCaption) lightboxCaption.textContent = alt;
+		if (lightboxDownload) {
+			// Add Cloudinary attachment flag to force download instead of viewing
+			lightboxDownload.href = full.replace('/upload/', '/upload/fl_attachment/');
+		}
+		lightbox?.classList.add('open');
+		document.body.style.overflow = 'hidden';
+	}
+
+	function closeLightbox() {
+		lightbox?.classList.remove('open');
+		document.body.style.overflow = '';
+		setTimeout(() => {
+			if (lightboxImg) lightboxImg.src = '';
+		}, 300);
+	}
+
+	function navigate(dir: number) {
+		currentIndex = (currentIndex + dir + items.length) % items.length;
+		openLightbox(currentIndex);
+	}
+
+	// Click handlers
+	items.forEach((item, i) => {
+		item.addEventListener('click', () => openLightbox(i));
+	});
+
+	lightboxClose?.addEventListener('click', closeLightbox);
+	lightboxPrev?.addEventListener('click', () => navigate(-1));
+	lightboxNext?.addEventListener('click', () => navigate(1));
+
+	// Click backdrop to close
+	lightbox?.addEventListener('click', (e) => {
+		if (e.target === lightbox || (e.target as HTMLElement).classList.contains('lightbox-img-wrap')) {
+			closeLightbox();
+		}
+	});
+
+	// Keyboard nav
+	document.addEventListener('keydown', (e) => {
+		if (!lightbox?.classList.contains('open')) return;
+		if (e.key === 'Escape') closeLightbox();
+		if (e.key === 'ArrowLeft') navigate(-1);
+		if (e.key === 'ArrowRight') navigate(1);
+	});
+</script>
+
+</body>
+</html>

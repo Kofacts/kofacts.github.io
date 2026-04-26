@@ -35,6 +35,10 @@ jobs:
 
       - name: Build site
         run: npm run build
+        env:
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
