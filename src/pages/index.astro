@@ -99,7 +99,23 @@ const personSchema = {
 		</section>
 	)}
 
-	<section class="links animate-section" style="--delay: 4">
+	<section class="speaking animate-section" style="--delay: 4">
+		<h2>Speaking</h2>
+		<div class="list-item">
+			<span>Placeholder Keynote — Location</span>
+			<time>2026</time>
+		</div>
+	</section>
+
+	<section class="awards animate-section" style="--delay: 5">
+		<h2>Awards</h2>
+		<div class="list-item">
+			<span>Stevie Award — Innovation in Science or Technology (MENA)</span>
+			<time>2025</time>
+		</div>
+	</section>
+
+	<section class="links animate-section" style="--delay: 6">
 		<a href="mailto:raph@avae.ai">Email</a>
 		<a href="https://twitter.com/thekofacts" target="_blank" rel="noopener noreferrer">Twitter</a>
 		<a href="https://linkedin.com/in/obodugo" target="_blank" rel="noopener noreferrer">LinkedIn</a>
@@ -109,7 +125,7 @@ const personSchema = {
 		<a href="/now">Now</a>
 	</section>
 
-	<footer class="animate-section" style="--delay: 5">
+	<footer class="animate-section" style="--delay: 7">
 		<span>Lagos · Riyadh · London</span>
 		<a href="https://avae.ai" target="_blank" rel="noopener noreferrer" class="avae-credit">Built with Avae</a>
 	</footer>
@@ -304,7 +320,7 @@ const personSchema = {
 		font-weight: 500;
 	}
 	
-	.post {
+	.post, .list-item {
 		display: flex;
 		justify-content: space-between;
 		align-items: baseline;
@@ -314,11 +330,11 @@ const personSchema = {
 		border-bottom: 1px solid #18181b;
 	}
 	
-	.post:last-of-type {
+	.post:last-of-type, .list-item:last-of-type {
 		border-bottom: none;
 	}
 	
-	.post span {
+	.post span, .list-item span {
 		font-size: 14px;
 		color: #d4d4d8;
 		transition: color 0.2s;
@@ -328,7 +344,7 @@ const personSchema = {
 		color: #fafafa;
 	}
 	
-	.post time {
+	.post time, .list-item time {
 		font-size: 13px;
 		color: #3f3f46;
 		flex-shrink: 0;
@@ -349,6 +365,11 @@ const personSchema = {
 	
 	/* Reading */
 	.reading {
+		margin-bottom: 56px;
+	}
+	
+	/* Speaking & Awards */
+	.speaking, .awards {
 		margin-bottom: 56px;
 	}
 	
