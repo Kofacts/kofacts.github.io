@@ -38,14 +38,11 @@ const formatDate = (dateStr) => {
 		<p class="subtitle">{posts.length} essays</p>
 	</header>
 
-	<ul class="posts-grid">
+	<ul class="posts">
 		{posts.map((post) => (
 			<li>
-				<a href={`/blog/${post.slug}/`} class="post-card">
-					<div class="post-card-content">
-						<span class="title">{post.title}</span>
-						{post.description && <div class="description" set:html={post.description} />}
-					</div>
+				<a href={`/blog/${post.slug}/`} class="post">
+					<span class="title">{post.title}</span>
 					<time>{formatDate(post.date)}</time>
 				</a>
 			</li>
@@ -127,60 +124,47 @@ const formatDate = (dateStr) => {
 		color: #52525b;
 	}
 	
-	.posts-grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 20px;
+	.posts {
 		list-style: none;
 		margin-bottom: 56px;
 	}
 	
-	.post-card {
+	.post {
 		display: flex;
-		flex-direction: column;
 		justify-content: space-between;
-		gap: 24px;
-		padding: 20px;
+		align-items: baseline;
+		gap: 16px;
+		padding: 14px 0;
+		padding-left: 12px;
+		margin-left: -14px;
 		text-decoration: none;
-		border: 1px solid #18181b;
-		border-radius: 8px;
-		height: 100%;
-		background: #09090b;
-		transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+		border-bottom: 1px solid #18181b;
+		border-left: 2px solid transparent;
+		transition: transform 0.2s ease, border-color 0.2s ease;
 	}
 	
-	.post-card:hover {
-		transform: translateY(-2px);
-		border-color: #3f3f46;
-		background: #111113;
-	}
-	
-	.post-card-content {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
+	li:last-child .post {
+		border-bottom: none;
 	}
 	
 	.title {
 		font-size: 15px;
-		font-weight: 500;
+		color: #d4d4d8;
+		transition: color 0.2s;
+	}
+	
+	.post:hover {
+		transform: translateX(4px);
+		border-left-color: #3f3f46;
+	}
+	
+	.post:hover .title {
 		color: #fafafa;
-		line-height: 1.4;
 	}
 	
-	.description {
+	time {
 		font-size: 13px;
-		color: #71717a;
-		line-height: 1.6;
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
-	
-	.post-card time {
-		font-size: 12px;
-		color: #52525b;
+		color: #3f3f46;
 		flex-shrink: 0;
 	}
 	
@@ -193,10 +177,7 @@ const formatDate = (dateStr) => {
 	
 	@media (max-width: 520px) {
 		main { padding: 48px 20px 64px; }
-		.posts-grid {
-			grid-template-columns: 1fr;
-			gap: 16px;
-		}
+		.post { flex-direction: column; gap: 4px; }
 	}
 </style>
 
