@@ -101,8 +101,8 @@ const personSchema = {
 
 	<section class="speaking animate-section" style="--delay: 4">
 		<h2>Speaking</h2>
-		<div class="videos-grid">
-			<a href="https://www.youtube.com/watch?v=V0tF9O2yFJc&t=24s" class="video" target="_blank" rel="noopener noreferrer">
+		<div class="videos-list">
+			<div class="video">
 				<div class="video-thumbnail-wrapper">
 					<img src="https://img.youtube.com/vi/V0tF9O2yFJc/maxresdefault.jpg" alt="How AI is reshaping the future of work & skills in Africa" class="video-thumbnail" loading="lazy" />
 				</div>
@@ -110,8 +110,8 @@ const personSchema = {
 					<span class="video-title">How AI is reshaping the future of work & skills in Africa</span>
 					<span class="video-context">CNBC Africa</span>
 				</div>
-			</a>
-			<a href="https://www.youtube.com/watch?v=psNpGTZlspc" class="video" target="_blank" rel="noopener noreferrer">
+			</div>
+			<div class="video">
 				<div class="video-thumbnail-wrapper">
 					<img src="https://img.youtube.com/vi/psNpGTZlspc/maxresdefault.jpg" alt="The Future of Work: The 9-to-5 and the Gig Economy in the Age of AI" class="video-thumbnail" loading="lazy" />
 				</div>
@@ -119,7 +119,7 @@ const personSchema = {
 					<span class="video-title">The Future of Work: The 9-to-5 and the Gig Economy in the Age of AI</span>
 					<span class="video-context">Panel Discussion</span>
 				</div>
-			</a>
+			</div>
 		</div>
 	</section>
 
@@ -389,53 +389,61 @@ const personSchema = {
 		margin-bottom: 56px;
 	}
 	
-	.videos-grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 20px;
+	.videos-list {
+		display: flex;
+		flex-direction: column;
 	}
 	
 	.video {
 		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		text-decoration: none;
+		flex-direction: row;
+		align-items: center;
+		gap: 16px;
+		padding: 12px 0;
+		border-bottom: 1px solid #18181b;
+	}
+	
+	.video:last-of-type {
+		border-bottom: none;
 	}
 	
 	.video-thumbnail-wrapper {
-		width: 100%;
+		width: 80px;
+		flex-shrink: 0;
 		aspect-ratio: 16 / 9;
 		overflow: hidden;
-		border-radius: 6px;
+		border-radius: 4px;
 		border: 1px solid #27272a;
-		transition: border-color 0.2s, transform 0.3s ease;
+		opacity: 0.8;
+		transition: opacity 0.2s, border-color 0.2s;
 	}
 	
 	.video-thumbnail {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		transition: transform 0.5s ease;
+		filter: grayscale(100%);
+		transition: filter 0.3s ease;
 	}
 	
 	.video:hover .video-thumbnail-wrapper {
-		border-color: #52525b;
-		transform: translateY(-2px);
+		opacity: 1;
+		border-color: #3f3f46;
 	}
 	
 	.video:hover .video-thumbnail {
-		transform: scale(1.05);
+		filter: grayscale(0%);
 	}
 	
 	.video-info {
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 2px;
 	}
 	
 	.video-title {
-		font-size: 13px;
-		font-weight: 500;
+		font-size: 14px;
+		font-weight: 400;
 		color: #d4d4d8;
 		line-height: 1.4;
 		transition: color 0.2s;
@@ -443,7 +451,7 @@ const personSchema = {
 	
 	.video-context {
 		font-size: 12px;
-		color: #71717a;
+		color: #52525b;
 	}
 	
 	.video:hover .video-title {
@@ -723,7 +731,6 @@ const personSchema = {
 	@media (max-width: 520px) {
 		main { padding: 48px 20px 64px; }
 		.post { flex-direction: column; gap: 4px; }
-		.videos-grid { grid-template-columns: 1fr; gap: 24px; }
 		.sticky-header { 
 			top: 12px;
 			width: calc(100% - 32px);
