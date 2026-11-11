@@ -4,14 +4,14 @@ import { PhotosLightboxBehavior } from '@/components/ClientBehaviors';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Photos',
-  description: 'Photography by Rapheal Obodugo',
+  title: 'Photography · Rapheal Obodugo',
+  description: 'Observations, geometry, and visual dispatches by Rapheal Obodugo',
   alternates: {
     canonical: 'https://obodugo.online/photos',
   },
   openGraph: {
-    title: 'Photos · Rapheal Obodugo',
-    description: 'Photography by Rapheal Obodugo',
+    title: 'Photography · Rapheal Obodugo',
+    description: 'Observations, geometry, and visual dispatches by Rapheal Obodugo',
     url: 'https://obodugo.online/photos',
   },
 };
@@ -23,59 +23,89 @@ export default async function PhotosPage() {
 
   return (
     <>
-      <main className="page-photos">
-        <Link href="/" className="profile-link">
-          <span className="back-arrow">←</span>
-          <img src="/ajabruwal.png" alt="" className="mini-avatar" />
-          <span className="mini-name">Rapheal Obodugo</span>
-        </Link>
+      <main className="page-photos taste-master">
+        <div className="subpage-nav">
+          <Link href="/" className="profile-link">
+            <span className="back-arrow">←</span>
+            <img src="/ajabruwal.png" alt="" className="mini-avatar" />
+            <span className="mini-name">Rapheal Obodugo</span>
+          </Link>
+          <span className="subpage-crumb">Photography</span>
+        </div>
 
-        <header>
-          <div className="header-top">
-            <h1>Photos</h1>
+        <header className="page-header">
+          <h1 className="page-title">Photography</h1>
+          <p className="page-subtitle">Observations, geometry, and visual notes from cities and transit.</p>
+          <div className="page-meta-strip">
+            <span className="meta-item">Fujifilm X100VI · 23mm F2</span>
+            <span className="meta-sep">·</span>
             <a
               href="https://instagram.com/h005y"
               target="_blank"
               rel="noopener noreferrer"
-              className="ig-link"
+              className="meta-link"
             >
-              @h005y
+              @h005y on Instagram ↗
             </a>
+            <span className="meta-sep">·</span>
+            <span className="meta-item">{photos.length} frames</span>
           </div>
-          <p className="subtitle">Things I see, places I go</p>
-          <p className="camera">Shot on Fujifilm X100VI</p>
         </header>
 
         {photos.length > 0 ? (
-          <section className="gallery" id="gallery">
-            {photos.map((photo, i) => (
-              <button
-                key={photo.id || i}
-                className="gallery-item"
-                data-full={photo.full}
-                data-alt={photo.alt}
-                data-index={i}
-                type="button"
-              >
-                <img
-                  src={photo.src}
-                  alt={photo.alt}
-                  width={photo.width}
-                  height={photo.height}
-                  loading={i < 4 ? 'eager' : 'lazy'}
-                  decoding="async"
-                />
-              </button>
-            ))}
+          <section className="photos-gallery-section" id="gallery">
+            <div className="photos-masonry-grid">
+              {photos.map((photo, i) => (
+                <button
+                  key={photo.id || i}
+                  className="photo-frame-item gallery-item"
+                  data-full={photo.full}
+                  data-alt={photo.alt}
+                  data-index={i}
+                  type="button"
+                >
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    width={photo.width}
+                    height={photo.height}
+                    loading={i < 4 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    className="photo-img"
+                  />
+                </button>
+              ))}
+            </div>
           </section>
         ) : (
-          <p className="empty">Photos coming soon.</p>
+          <div className="empty-photos">
+            <p>Archive loading or currently refreshing.</p>
+          </div>
         )}
 
-        <footer>{photos.length} photos</footer>
+        <footer className="subpage-footer">
+          <div className="footer-left">
+            <span>Rapheal Obodugo</span>
+            <span className="footer-sep">·</span>
+            <span>Fujifilm X100VI</span>
+          </div>
+          <div className="footer-right">
+            <Link href="/" className="footer-link">
+              Home
+            </Link>
+            <span className="footer-sep">·</span>
+            <Link href="/blog" className="footer-link">
+              Essays
+            </Link>
+            <span className="footer-sep">·</span>
+            <Link href="/now" className="footer-link">
+              Now
+            </Link>
+          </div>
+        </footer>
       </main>
 
-      {/* Lightbox */}
+      {/* Lightbox Component */}
       <div
         className="lightbox"
         id="lightbox"
@@ -103,31 +133,26 @@ export default async function PhotosPage() {
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
         </a>
         <button
-          className="lightbox-nav lightbox-prev"
+          className="lightbox-prev"
           id="lightboxPrev"
           type="button"
           aria-label="Previous photo"
         >
           ‹
         </button>
-        <button
-          className="lightbox-nav lightbox-next"
-          id="lightboxNext"
-          type="button"
-          aria-label="Next photo"
-        >
+        <div className="lightbox-content">
+          <img src="" alt="" id="lightboxImg" />
+          <p className="lightbox-caption" id="lightboxCaption"></p>
+        </div>
+        <button className="lightbox-next" id="lightboxNext" type="button" aria-label="Next photo">
           ›
         </button>
-        <div className="lightbox-img-wrap">
-          <img className="lightbox-img" id="lightboxImg" src="" alt="" />
-        </div>
-        <p className="lightbox-caption" id="lightboxCaption"></p>
       </div>
 
       <PhotosLightboxBehavior />

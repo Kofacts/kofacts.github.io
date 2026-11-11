@@ -3,14 +3,14 @@ import { fetchGoodreadsReadBooks } from '@/utils/goodreads';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Bookshelf',
-  description: "Books I've read",
+  title: 'Bookshelf · Rapheal Obodugo',
+  description: "A working library of history, epistemology, biographies, systems, and literature.",
   alternates: {
     canonical: 'https://obodugo.online/bookshelf',
   },
   openGraph: {
     title: 'Bookshelf · Rapheal Obodugo',
-    description: "Books I've read",
+    description: "A working library of history, epistemology, biographies, systems, and literature.",
     url: 'https://obodugo.online/bookshelf',
   },
 };
@@ -21,58 +21,91 @@ export default async function BookshelfPage() {
   const books = await fetchGoodreadsReadBooks();
 
   return (
-    <main className="page-bookshelf">
-      <Link href="/" className="profile-link">
-        <span className="back-arrow">←</span>
-        <img src="/ajabruwal.png" alt="" className="mini-avatar" />
-        <span className="mini-name">Rapheal Obodugo</span>
-      </Link>
-
-      <header>
-        <h1>Bookshelf</h1>
-        <p className="subtitle">{books.length} books read</p>
-      </header>
-
-      <div className="books-grid">
-        {books.map((book) => (
-          <a
-            key={book.id || book.title}
-            href={book.link}
-            className="book"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {book.imageUrl && (
-              <img
-                src={book.imageUrl}
-                alt={book.title}
-                className="book-cover"
-                loading="lazy"
-              />
-            )}
-            <div className="book-info">
-              <span className="book-title">{book.title}</span>
-              <span className="book-author">{book.author}</span>
-              {book.rating > 0 && (
-                <span className="book-rating">
-                  {'★'.repeat(book.rating)}
-                  {'☆'.repeat(5 - book.rating)}
-                </span>
-              )}
-            </div>
-          </a>
-        ))}
+    <main className="page-bookshelf taste-master">
+      <div className="subpage-nav">
+        <Link href="/" className="profile-link">
+          <span className="back-arrow">←</span>
+          <img src="/ajabruwal.png" alt="" className="mini-avatar" />
+          <span className="mini-name">Rapheal Obodugo</span>
+        </Link>
+        <span className="subpage-crumb">Bookshelf</span>
       </div>
 
-      <footer>
-        Synced from{' '}
-        <a
-          href="https://www.goodreads.com/user/show/183340682"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Goodreads
-        </a>
+      <header className="page-header">
+        <h1 className="page-title">Bookshelf</h1>
+        <p className="page-subtitle">A working library of history, epistemology, biographies, systems, and literature.</p>
+        <div className="page-meta-strip">
+          <span className="meta-item">{books.length} volumes cataloged</span>
+          <span className="meta-sep">·</span>
+          <a
+            href="https://www.goodreads.com/user/show/183340682"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="meta-link"
+          >
+            Goodreads profile ↗
+          </a>
+        </div>
+      </header>
+
+      <section className="bookshelf-grid-section">
+        <div className="bookshelf-library-grid">
+          {books.map((book) => (
+            <a
+              key={book.id || book.title}
+              href={book.link}
+              className="shelf-book-card"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="shelf-cover-frame">
+                {book.imageUrl ? (
+                  <img
+                    src={book.imageUrl}
+                    alt={book.title}
+                    className="shelf-book-image"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="shelf-cover-fallback">
+                    <span>{book.title}</span>
+                  </div>
+                )}
+              </div>
+              <div className="shelf-book-meta">
+                <h3 className="shelf-book-name">{book.title}</h3>
+                <span className="shelf-book-creator">{book.author}</span>
+                {book.rating > 0 && (
+                  <div className="shelf-book-stars" aria-label={`${book.rating} out of 5 stars`}>
+                    {'★'.repeat(book.rating)}
+                    <span className="stars-empty">{'★'.repeat(5 - book.rating)}</span>
+                  </div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <footer className="subpage-footer">
+        <div className="footer-left">
+          <span>Rapheal Obodugo</span>
+          <span className="footer-sep">·</span>
+          <span>Reading archive</span>
+        </div>
+        <div className="footer-right">
+          <Link href="/" className="footer-link">
+            Home
+          </Link>
+          <span className="footer-sep">·</span>
+          <Link href="/blog" className="footer-link">
+            Essays
+          </Link>
+          <span className="footer-sep">·</span>
+          <Link href="/now" className="footer-link">
+            Now
+          </Link>
+        </div>
       </footer>
     </main>
   );

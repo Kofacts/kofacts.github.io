@@ -62,28 +62,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const posts = await fetchRSSPosts();
-  const post = posts.find((p) => p.slug === slug);
+  const currentIndex = posts.findIndex((p) => p.slug === slug);
+  const post = posts[currentIndex];
 
   if (!post) {
     notFound();
   }
 
+  const nextPost = posts[currentIndex + 1] || null;
+
   const formatDate = (dateStr: string) => {
     try {
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return '';
-      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     } catch {
       return '';
     }
   };
 
-  const getReadingTime = (content: string) => {
-    if (!content) return '2 min';
-    const words = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
-    const minutes = Math.ceil(words / 200);
-    return `${minutes} min`;
-  };
+  const wordCount = (post.content || '').replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(wordCount / 200));
 
   const image = extractFirstImage(post.content) || 'https://obodugo.online/ogmeta.png';
 
@@ -113,23 +112,43 @@ export default async function BlogPostPage({ params }: Props) {
       />
       <div className="scroll-progress" id="scrollProgress"></div>
 
-      <main className="page-blog-post">
-        <Link href="/" className="profile-link">
-          <span className="back-arrow">←</span>
-          <img src="/ajabruwal.png" alt="" className="mini-avatar" />
-          <span className="mini-name">Rapheal Obodugo</span>
-        </Link>
+      <main className="page-blog-post taste-revamp">
+        <div className="post-top-nav">
+          <Link href="/" className="profile-link">
+            <span className="back-arrow">←</span>
+            <img src="/ajabruwal.png" alt="" className="mini-avatar" />
+            <span className="mini-name">Rapheal Obodugo</span>
+          </Link>
+          <Link href="/blog" className="archive-crumb">
+            Essays
+          </Link>
+        </div>
 
-        <header>
-          <h1>{post.title}</h1>
-          <div className="meta">
-            <span>{formatDate(post.date)}</span>
-            <span className="sep">·</span>
-            <span>{getReadingTime(post.content || '')}</span>
+        <header className="post-header">
+          <h1 className="post-title">{post.title}</h1>
+          <div className="post-meta">
+            <time className="meta-item">{formatDate(post.date)}</time>
+            <span className="meta-sep">·</span>
+            <span className="meta-item">{minutes} min read</span>
+            {wordCount > 0 && (
+              <>
+                <span className="meta-sep">·</span>
+                <span className="meta-item">~{wordCount.toLocaleString()} words</span>
+              </>
+            )}
+            <span className="meta-sep">·</span>
+            <a
+              href={post.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="meta-substack-link"
+            >
+              Substack ↗
+            </a>
           </div>
         </header>
 
-        <article>
+        <article className="post-body">
           {post.content ? (
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           ) : (
@@ -137,13 +156,43 @@ export default async function BlogPostPage({ params }: Props) {
           )}
         </article>
 
-        <footer>
-          <a href={post.link} target="_blank" rel="noopener noreferrer" className="substack">
-            Read on Substack ↗
-          </a>
-          <nav>
-            <Link href="/blog">← All essays</Link>
-            <Link href="/">Home</Link>
+        <footer className="post-footer">
+          <div className="substack-cta">
+            <div className="cta-copy">
+              <span className="cta-kicker">ESSAY CORRESPONDENCE</span>
+              <p className="cta-text">Comments, discourse, and revisions are hosted on Substack.</p>
+            </div>
+            <a
+              href={post.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="substack-button"
+            >
+              Discuss on Substack <span className="arrow">↗</span>
+            </a>
+          </div>
+
+          {nextPost && (
+            <div className="next-essay-card">
+              <span className="next-kicker">READ NEXT IN ARCHIVE</span>
+              <Link href={`/blog/${nextPost.slug}/`} className="next-link">
+                <div className="next-info">
+                  <h3 className="next-title">{nextPost.title}</h3>
+                  <span className="next-meta">
+                    {nextPost.date ? new Date(nextPost.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : ''} · Read essay →
+                  </span>
+                </div>
+              </Link>
+            </div>
+          )}
+
+          <nav className="footer-navigation">
+            <Link href="/blog" className="nav-back">
+              ← All essays
+            </Link>
+            <Link href="/" className="nav-home">
+              Home
+            </Link>
           </nav>
         </footer>
       </main>
