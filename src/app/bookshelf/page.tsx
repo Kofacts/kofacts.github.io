@@ -4,13 +4,13 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Bookshelf · Rapheal Obodugo',
-  description: "A working library of history, epistemology, biographies, systems, and literature.",
+  description: 'A working library of history, epistemology, biographies, systems, and literature.',
   alternates: {
     canonical: 'https://obodugo.online/bookshelf',
   },
   openGraph: {
     title: 'Bookshelf · Rapheal Obodugo',
-    description: "A working library of history, epistemology, biographies, systems, and literature.",
+    description: 'A working library of history, epistemology, biographies, systems, and literature.',
     url: 'https://obodugo.online/bookshelf',
   },
 };
@@ -22,6 +22,7 @@ export default async function BookshelfPage() {
 
   return (
     <main className="page-bookshelf taste-master">
+      {/* EDITORIAL SUBPAGE NAV */}
       <div className="subpage-nav">
         <Link href="/" className="profile-link">
           <span className="back-arrow">←</span>
@@ -31,9 +32,12 @@ export default async function BookshelfPage() {
         <span className="subpage-crumb">Bookshelf</span>
       </div>
 
+      {/* HEADER */}
       <header className="page-header">
         <h1 className="page-title">Bookshelf</h1>
-        <p className="page-subtitle">A working library of history, epistemology, biographies, systems, and literature.</p>
+        <p className="page-subtitle">
+          A working library of history, epistemology, biographies, systems, and literature.
+        </p>
         <div className="page-meta-strip">
           <span className="meta-item">{books.length} volumes cataloged</span>
           <span className="meta-sep">·</span>
@@ -43,42 +47,45 @@ export default async function BookshelfPage() {
             rel="noopener noreferrer"
             className="meta-link"
           >
-            Goodreads profile ↗
+            Goodreads archive ↗
           </a>
         </div>
       </header>
 
+      {/* 3D MONOGRAPH LIBRARY GRID */}
       <section className="bookshelf-grid-section">
         <div className="bookshelf-library-grid">
           {books.map((book) => (
             <a
               key={book.id || book.title}
               href={book.link}
-              className="shelf-book-card"
+              className="shelf-book-item"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <div className="shelf-cover-frame">
+              <div className="shelf-book-frame">
                 {book.imageUrl ? (
                   <img
                     src={book.imageUrl}
                     alt={book.title}
-                    className="shelf-book-image"
+                    className="shelf-book-cover"
                     loading="lazy"
                   />
                 ) : (
-                  <div className="shelf-cover-fallback">
-                    <span>{book.title}</span>
+                  <div className="shelf-book-fallback">
+                    <span className="fallback-title">{book.title}</span>
+                    <span className="fallback-author">{book.author}</span>
                   </div>
                 )}
+                <div className="shelf-spine-edge" />
               </div>
               <div className="shelf-book-meta">
-                <h3 className="shelf-book-name">{book.title}</h3>
-                <span className="shelf-book-creator">{book.author}</span>
+                <span className="shelf-book-title">{book.title}</span>
+                <span className="shelf-book-author">{book.author}</span>
                 {book.rating > 0 && (
                   <div className="shelf-book-stars" aria-label={`${book.rating} out of 5 stars`}>
-                    {'★'.repeat(book.rating)}
-                    <span className="stars-empty">{'★'.repeat(5 - book.rating)}</span>
+                    <span className="stars-active">{'★'.repeat(book.rating)}</span>
+                    <span className="stars-empty">{'☆'.repeat(5 - book.rating)}</span>
                   </div>
                 )}
               </div>
@@ -87,25 +94,12 @@ export default async function BookshelfPage() {
         </div>
       </section>
 
+      {/* FOOTER */}
       <footer className="subpage-footer">
-        <div className="footer-left">
-          <span>Rapheal Obodugo</span>
-          <span className="footer-sep">·</span>
-          <span>Reading archive</span>
-        </div>
-        <div className="footer-right">
-          <Link href="/" className="footer-link">
-            Home
-          </Link>
-          <span className="footer-sep">·</span>
-          <Link href="/blog" className="footer-link">
-            Essays
-          </Link>
-          <span className="footer-sep">·</span>
-          <Link href="/now" className="footer-link">
-            Now
-          </Link>
-        </div>
+        <Link href="/" className="subpage-back-link">
+          ← Return to main index
+        </Link>
+        <span className="subpage-footer-copy">Synced via Goodreads · Obodugo © 2026</span>
       </footer>
     </main>
   );
