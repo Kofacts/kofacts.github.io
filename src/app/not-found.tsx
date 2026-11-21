@@ -1,42 +1,34 @@
 import Link from 'next/link';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Folio Not Found · Rapheal Obodugo',
-  description: 'The requested folio or monograph does not exist in this archive.',
-};
 
 export default function NotFound() {
   return (
-    <main className="page-404 taste-master">
-      <div className="subpage-nav">
-        <Link href="/" className="profile-link">
-          <span className="back-arrow">←</span>
-          <img src="/ajabruwal.png" alt="" className="mini-avatar" />
-          <span className="mini-name">Rapheal Obodugo</span>
-        </Link>
-        <span className="subpage-crumb">404</span>
-      </div>
-
-      <div className="not-found-container">
-        <div className="not-found-kicker">Index Reference 404</div>
-        <h1 className="not-found-title">The requested folio does not exist.</h1>
-        <p className="not-found-desc">
-          The link you followed may be outdated, or the monograph was consolidated into a newer edition or archived.
-        </p>
-        <div className="not-found-actions">
-          <Link href="/" className="taste-button primary">
-            ← Return to main index
-          </Link>
-          <Link href="/blog" className="taste-button secondary">
-            Browse essays
-          </Link>
+    <main className="tf tf-404">
+      <header className="tf-head">
+        <div>
+          <Link href="/" className="tf-name tf-home">Rapheal Obodugo</Link>
         </div>
-      </div>
+        <nav className="tf-nav">
+          <Link href="/blog">Writing</Link>
+          <Link href="/bookshelf">Books</Link>
+          <Link href="/photos">Photographs</Link>
+          <Link href="/now">Now</Link>
+        </nav>
+      </header>
 
-      <footer className="subpage-footer">
-        <span className="subpage-footer-copy">Rapheal Obodugo · Lagos / London</span>
-      </footer>
+      <section className="tf-row">
+        <aside className="tf-margin">404</aside>
+        <div className="tf-body">
+          <p>
+            This page does not exist. It may have been consolidated into a newer piece, or the link
+            you followed is outdated.
+          </p>
+          <p>
+            <Link href="/">Home</Link>
+            <span className="tf-dim"> · </span>
+            <Link href="/blog">Essays</Link>
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

@@ -28,9 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = posts.find((p) => p.slug === slug);
 
   if (!post) {
-    return {
-      title: 'Post Not Found',
-    };
+    return { title: 'Post Not Found' };
   }
 
   const image = extractFirstImage(post.content) || 'https://obodugo.online/ogmeta.png';
@@ -39,9 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${post.title} · Rapheal Obodugo`,
     description,
-    alternates: {
-      canonical: `https://obodugo.online/blog/${post.slug}`,
-    },
+    alternates: { canonical: `https://obodugo.online/blog/${post.slug}` },
     openGraph: {
       type: 'article',
       title: `${post.title} · Rapheal Obodugo`,
@@ -70,12 +66,23 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   const nextPost = posts[currentIndex + 1] || null;
+  const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
 
-  const formatDate = (dateStr: string) => {
+  const fmtDate = (dateStr: string) => {
     try {
       const d = new Date(dateStr);
       if (isNaN(d.getTime())) return '';
-      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      return d.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch {
+      return '';
+    }
+  };
+
+  const shortDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
     } catch {
       return '';
     }
@@ -90,16 +97,9 @@ export default async function BlogPostPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
-    author: {
-      '@type': 'Person',
-      name: 'Rapheal Obodugo',
-      url: 'https://obodugo.online',
-    },
+    author: { '@type': 'Person', name: 'Rapheal Obodugo', url: 'https://obodugo.online' },
     datePublished: post.date,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `https://obodugo.online/blog/${post.slug}`,
-    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://obodugo.online/blog/${post.slug}` },
     image,
     description: post.description || post.title,
   };
@@ -110,89 +110,74 @@ export default async function BlogPostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
+
       <div className="scroll-progress" id="scrollProgress"></div>
 
-      <main className="page-blog-post taste-revamp">
-        <div className="post-top-nav">
-          <Link href="/" className="profile-link">
-            <span className="back-arrow">←</span>
-            <img src="/ajabruwal.png" alt="" className="mini-avatar" />
-            <span className="mini-name">Rapheal Obodugo</span>
-          </Link>
-          <Link href="/blog" className="archive-crumb">
-            Essays
-          </Link>
-        </div>
+      <main className="tf tf-essay">
+        {/* ---- broadsheet header ---- */}
+        <header className="tf-essay-head">
+          <nav className="tf-essay-nav">
+            <Link href="/">Rapheal Obodugo</Link>
+            <span className="tf-dim">/</span>
+            <Link href="/blog">Writing</Link>
+          </nav>
 
-        <header className="post-header">
-          <h1 className="post-title">{post.title}</h1>
-          <div className="post-meta">
-            <time className="meta-item">{formatDate(post.date)}</time>
-            <span className="meta-sep">·</span>
-            <span className="meta-item">{minutes} min read</span>
-            {wordCount > 0 && (
-              <>
-                <span className="meta-sep">·</span>
-                <span className="meta-item">~{wordCount.toLocaleString()} words</span>
-              </>
-            )}
-            <span className="meta-sep">·</span>
-            <a
-              href={post.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="meta-substack-link"
-            >
-              Substack ↗
-            </a>
+          <div className="tf-essay-headline">
+            <aside className="tf-essay-dateline">
+              <time>{fmtDate(post.date)}</time>
+              <span>{minutes} min read</span>
+              <span>{wordCount.toLocaleString()} words</span>
+            </aside>
+            <div>
+              <h1 className="tf-essay-title">{post.title}</h1>
+              {post.description && (
+                <p className="tf-essay-dek">
+                  {post.description.replace(/<[^>]*>/g, '').slice(0, 200)}
+                </p>
+              )}
+            </div>
           </div>
         </header>
 
-        <article className="post-body">
+        {/* ---- article body ---- */}
+        <article className="tf-essay-body tf-dropcap">
           {post.content ? (
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           ) : (
-            <p>Preview. Full post on Substack.</p>
+            <p>Preview only. <a href={post.link}>Full essay on Substack</a>.</p>
           )}
         </article>
 
-        <footer className="post-footer">
-          <div className="substack-cta">
-            <div className="cta-copy">
-              <span className="cta-kicker">ESSAY CORRESPONDENCE</span>
-              <p className="cta-text">Comments, discourse, and revisions are hosted on Substack.</p>
-            </div>
-            <a
-              href={post.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="substack-button"
-            >
-              Discuss on Substack <span className="arrow">↗</span>
+        {/* ---- article footer ---- */}
+        <footer className="tf-essay-foot">
+          <div className="tf-essay-colophon">
+            <a href={post.link} target="_blank" rel="noopener noreferrer">
+              Discuss on Substack ↗
             </a>
           </div>
 
-          {nextPost && (
-            <div className="next-essay-card">
-              <span className="next-kicker">READ NEXT IN ARCHIVE</span>
-              <Link href={`/blog/${nextPost.slug}/`} className="next-link">
-                <div className="next-info">
-                  <h3 className="next-title">{nextPost.title}</h3>
-                  <span className="next-meta">
-                    {nextPost.date ? new Date(nextPost.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : ''} · Read essay →
-                  </span>
-                </div>
-              </Link>
-            </div>
+          {(prevPost || nextPost) && (
+            <nav className="tf-essay-siblings">
+              {prevPost && (
+                <Link href={`/blog/${prevPost.slug}/`} className="tf-essay-sib tf-essay-sib-prev">
+                  <span className="tf-essay-sib-label">Previously</span>
+                  <span className="tf-essay-sib-title">{prevPost.title}</span>
+                  <span className="tf-essay-sib-date">{shortDate(prevPost.date)}</span>
+                </Link>
+              )}
+              {nextPost && (
+                <Link href={`/blog/${nextPost.slug}/`} className="tf-essay-sib tf-essay-sib-next">
+                  <span className="tf-essay-sib-label">Next</span>
+                  <span className="tf-essay-sib-title">{nextPost.title}</span>
+                  <span className="tf-essay-sib-date">{shortDate(nextPost.date)}</span>
+                </Link>
+              )}
+            </nav>
           )}
 
-          <nav className="footer-navigation">
-            <Link href="/blog" className="nav-back">
-              ← All essays
-            </Link>
-            <Link href="/" className="nav-home">
-              Home
-            </Link>
+          <nav className="tf-essay-endnav">
+            <Link href="/blog">← All essays</Link>
+            <Link href="/">Home</Link>
           </nav>
         </footer>
       </main>

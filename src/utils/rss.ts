@@ -57,7 +57,7 @@ function parseXml(xml: string): Post[] {
     const getTag = (tag: string) => {
       const regex = new RegExp(`<${tag}>(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?<\\/${tag}>`);
       const m = item.match(regex);
-      return m ? m[1].trim() : '';
+      return m ? decodeHtmlEntities(m[1].trim()) : '';
     };
 
     const title = getTag('title');
@@ -74,4 +74,13 @@ function parseXml(xml: string): Post[] {
   }
 
   return posts;
+}
+
+/** Decode numeric HTML entities (&#8217; &#x2019;) to their actual characters.
+ *  Named entities (&amp; &lt; &gt;) are left untouched since the content is raw HTML
+ *  and they may be intentional. */
+function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)));
 }

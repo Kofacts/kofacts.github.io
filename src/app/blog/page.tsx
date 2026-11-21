@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { fetchRSSPosts } from '@/utils/rss';
-import { BlogArchive } from '@/components/BlogArchive';
+import { TfHeader, TfRow, TfFooter } from '@/components/TfShell';
 import type { Metadata } from 'next';
 import { SITE_TITLE, SITE_DESCRIPTION } from '@/consts';
 
@@ -19,49 +19,56 @@ export const metadata: Metadata = {
 
 export const revalidate = 900; // 15 minutes ISR
 
+function day(dateStr: string) {
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+}
+
+function teaser(desc: string) {
+  const t = (desc || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  return t.length > 150 ? t.slice(0, 150).trim() + '…' : t;
+}
+
 export default async function BlogIndexPage() {
   const posts = await fetchRSSPosts();
 
+  const byYear = new Map<string, typeof posts>();
+  for (const p of posts) {
+    const y = String(new Date(p.date).getFullYear() || '—');
+    if (!byYear.has(y)) byYear.set(y, []);
+    byYear.get(y)!.push(p);
+  }
+
   return (
-    <main className="page-blog-index taste-revamp">
-      <Link href="/" className="profile-link">
-        <span className="back-arrow">←</span>
-        <img src="/ajabruwal.png" alt="" className="mini-avatar" />
-        <span className="mini-name">Rapheal Obodugo</span>
-      </Link>
+    <main className="tf">
+      <TfHeader
+        title="Writing"
+        sub={
+          <>
+            {posts.length} essays on verification, agents, history and building. Also by email via{' '}
+            <a href="https://obodugo.substack.com">Substack</a>.
+          </>
+        }
+      />
 
-      <header className="blog-hero">
-        <h1 className="hero-heading">Essays</h1>
-        <p className="hero-subheading">
-          Inquiries on autonomous agents, epistemological verification, literature, and building.
-        </p>
-      </header>
+      {[...byYear.entries()].map(([year, items]) => (
+        <TfRow key={year} label={year}>
+          <ul className="tf-index">
+            {items.map((p) => (
+              <li key={p.slug}>
+                <div className="tf-index-line">
+                  <Link href={`/blog/${p.slug}/`}>{p.title}</Link>
+                  <span className="tf-date">{day(p.date)}</span>
+                </div>
+                {p.description ? <p className="tf-index-desc">{teaser(p.description)}</p> : null}
+              </li>
+            ))}
+          </ul>
+        </TfRow>
+      ))}
 
-      <BlogArchive posts={posts} />
-
-      <footer className="blog-footer">
-        <div className="footer-left">
-          <span>All thoughts are my own.</span>
-          <span className="footer-sep">·</span>
-          <a
-            href="https://obodugo.substack.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer-link"
-          >
-            Substack ↗
-          </a>
-          <span className="footer-sep">·</span>
-          <a href="/rss.xml" className="footer-link">
-            RSS
-          </a>
-        </div>
-        <div className="footer-right">
-          <Link href="/" className="footer-link">
-            Home
-          </Link>
-        </div>
-      </footer>
+      <TfFooter note="All thoughts are my own, and revised without notice." />
     </main>
   );
 }

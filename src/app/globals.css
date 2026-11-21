@@ -1237,3 +1237,626 @@ main.page-404.taste-master {
   }
 }
 
+/* ==========================================================================
+   TEXT-FIRST HOMEPAGE (src/app/page.tsx) — paper, small serif, marginalia
+   ========================================================================== */
+body:has(main.tf) { background: #f5f3ee; }
+body:has(main.tf) .grain { display: none; }
+
+main.tf {
+  --ink: #1d1c1a;
+  --body: #34322e;
+  --dim: #8c887f;
+  --faint: #b5b0a5;
+  --rule: #e3dfd5;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 88px 32px 96px;
+  color: var(--body);
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  font-size: 14.5px;
+  line-height: 1.62;
+  font-feature-settings: 'onum' 1, 'kern' 1, 'liga' 1;
+  font-variant-numeric: oldstyle-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+main.tf ::selection { background: #ebe3c9; color: var(--ink); }
+
+.tf a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--faint);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2.5px;
+  transition: text-decoration-color .15s ease, color .15s ease;
+}
+.tf a:hover { text-decoration-color: var(--ink); }
+
+/* Three-column grid: margin label | measure | sidenotes */
+.tf-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 520px) 1fr;
+  column-gap: 32px;
+  margin-bottom: 44px;
+}
+.tf-margin {
+  grid-column: 1;
+  font-variant: all-small-caps;
+  font-variant-numeric: oldstyle-nums;
+  letter-spacing: .06em;
+  font-size: 13.5px;
+  color: var(--dim);
+  text-align: right;
+  line-height: 1.62;
+}
+.tf-body { grid-column: 2; position: relative; }
+.tf-body p { margin: 0 0 13px; hyphens: auto; -webkit-hyphens: auto; }
+.tf-body p:last-child { margin-bottom: 0; }
+.tf-lede { color: var(--ink); }
+
+/* Tufte sidenotes: float into right gutter on wide screens */
+.tf-sn {
+  float: right;
+  clear: right;
+  width: 220px;
+  margin-right: -252px;
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dim);
+  font-style: italic;
+}
+.tf-sn::before {
+  content: '';
+  display: block;
+  width: 14px;
+  border-top: 1px solid var(--rule);
+  margin-bottom: 6px;
+}
+
+/* Header */
+.tf-head {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 520px) 1fr;
+  column-gap: 32px;
+  align-items: baseline;
+  margin-bottom: 72px;
+}
+.tf-head > div { grid-column: 2; }
+.tf-name {
+  font-size: 15px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: .005em;
+}
+.tf-tag { margin: 0; font-size: 13px; color: var(--dim); }
+.tf-nav {
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 13px;
+}
+.tf-nav a { color: var(--dim); text-decoration: none; width: fit-content; }
+.tf-nav a:hover { color: var(--ink); }
+
+/* Chronology */
+.tf-chron {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  column-gap: 14px;
+  row-gap: 7px;
+  margin: 0;
+}
+.tf-chron dt {
+  color: var(--dim);
+  font-size: 13px;
+  font-variant-numeric: oldstyle-nums tabular-nums;
+}
+.tf-chron dd { margin: 0; }
+
+/* Writing, grouped by year */
+.tf-year { display: grid; grid-template-columns: 62px 1fr; column-gap: 14px; margin-bottom: 12px; }
+.tf-year-label { color: var(--dim); font-size: 13px; line-height: 1.62; }
+.tf-list { list-style: none; margin: 0; padding: 0; }
+.tf-list li { display: flex; align-items: baseline; gap: 10px; }
+.tf-list li a { text-decoration-color: transparent; }
+.tf-list li a:hover { text-decoration-color: var(--ink); }
+.tf-list li::after {
+  content: '';
+  order: 1;
+  flex: 1;
+  min-width: 18px;
+  border-bottom: 1px dotted var(--rule);
+  transform: translateY(-4px);
+}
+.tf-date {
+  order: 2;
+  font-size: 12.5px;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.tf-more { margin-top: 14px !important; padding-left: 76px; font-size: 13px; }
+
+.tf-dim { color: var(--dim); }
+.tf a.tf-dim-link { color: var(--dim); text-decoration-color: transparent; white-space: nowrap; }
+.tf a.tf-dim-link:hover { color: var(--ink); text-decoration-color: var(--ink); }
+
+/* Footer */
+.tf-foot { margin-top: 80px; padding-top: 22px; border-top: 1px solid var(--rule); font-size: 13px; }
+.tf-row-foot { margin-bottom: 0; }
+.tf-colophon { margin-top: 10px !important; font-size: 12px; color: var(--faint); font-style: italic; }
+
+/* TfShell shared: title on subpages */
+.tf-home { text-decoration: none; }
+.tf-home:hover { text-decoration: underline; text-decoration-color: var(--faint); }
+.tf-title {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--ink);
+  margin: 6px 0 0;
+  letter-spacing: -.01em;
+}
+
+/* ==========================================================================
+   BLOG INDEX — writing list with descriptions
+   ========================================================================== */
+.tf-index { list-style: none; margin: 0; padding: 0; }
+.tf-index li { margin-bottom: 10px; }
+.tf-index-line { display: flex; align-items: baseline; gap: 10px; }
+.tf-index-line a { text-decoration-color: transparent; }
+.tf-index-line a:hover { text-decoration-color: var(--ink); }
+.tf-index-line::after {
+  content: '';
+  order: 1;
+  flex: 1;
+  min-width: 18px;
+  border-bottom: 1px dotted var(--rule);
+  transform: translateY(-4px);
+}
+.tf-index-line .tf-date {
+  order: 2;
+  font-size: 12.5px;
+  color: var(--faint);
+  white-space: nowrap;
+}
+.tf-index-desc { font-size: 12.5px; color: var(--dim); margin: 2px 0 0 !important; line-height: 1.5; }
+
+/* ==========================================================================
+   ESSAY — broadsheet article layout
+   ========================================================================== */
+.tf-essay { max-width: 720px; }
+.tf-essay-head { margin-bottom: 56px; }
+.tf-essay-nav {
+  font-size: 13px;
+  margin-bottom: 40px;
+}
+.tf-essay-nav a { color: var(--dim); text-decoration: none; }
+.tf-essay-nav a:hover { color: var(--ink); }
+
+/* headline block: dateline in the left margin, title + dek on right */
+.tf-essay-headline {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 0 24px;
+  align-items: start;
+}
+.tf-essay-dateline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11.5px;
+  color: var(--dim);
+  text-align: right;
+  padding-top: 6px;
+  line-height: 1.5;
+  font-variant-numeric: oldstyle-nums;
+  border-right: 1px solid var(--rule);
+  padding-right: 20px;
+}
+.tf-essay-title {
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.25;
+  letter-spacing: -.02em;
+  margin: 0 0 10px;
+}
+.tf-essay-dek {
+  font-size: 15px;
+  color: var(--dim);
+  line-height: 1.5;
+  font-style: italic;
+  margin: 0;
+}
+
+/* body typography */
+.tf-essay-body { margin-bottom: 56px; }
+.tf-essay-body > div > p {
+  margin: 0 0 18px;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  line-height: 1.72;
+}
+
+/* drop cap on first paragraph */
+.tf-dropcap > div > p:first-of-type::first-letter {
+  float: left;
+  font-size: 3.6em;
+  line-height: .78;
+  padding-right: 8px;
+  padding-top: 4px;
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.tf-essay-body > div > h1,
+.tf-essay-body > div > h2,
+.tf-essay-body > div > h3 {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink);
+  margin: 44px 0 12px;
+}
+.tf-essay-body > div > h2 { font-size: 20px; }
+.tf-essay-body > div > h3 { font-size: 17px; }
+
+.tf-essay-body > div > blockquote {
+  margin: 28px 0;
+  padding-left: 20px;
+  border-left: 2px solid var(--rule);
+  color: var(--dim);
+  font-style: italic;
+}
+
+.tf-essay-body > div > pre,
+.tf-essay-body > div > code,
+.tf-essay-body > div p > code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 13px;
+  background: var(--rule);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.tf-essay-body > div > pre {
+  padding: 14px 16px;
+  overflow-x: auto;
+  border-radius: 4px;
+}
+.tf-essay-body > div > pre code { background: none; padding: 0; }
+
+/* images — full column width, thin rule top and bottom */
+.tf-essay-body > div img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 32px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+}
+.tf-essay-body > div img.sizing-normal,
+.tf-essay-body > div img.sizing-full-width { width: 100%; }
+.tf-essay-body > div figure { margin: 32px 0; }
+.tf-essay-body > div figcaption {
+  font-size: 11.5px;
+  color: var(--dim);
+  text-align: left;
+  margin-top: 6px;
+  font-style: italic;
+}
+.tf-essay-body > div hr { border: none; border-top: 1px solid var(--rule); margin: 48px 0; }
+
+/* lists within articles */
+.tf-essay-body > div > ul,
+.tf-essay-body > div > ol {
+  margin: 0 0 18px;
+  padding-left: 24px;
+  line-height: 1.72;
+}
+.tf-essay-body > div li { margin-bottom: 6px; }
+
+/* Hide Substack widgets */
+.tf-essay-body .button-wrapper,
+.tf-essay-body .subscription-widget,
+.tf-essay-body .subscribe-widget,
+.tf-essay-body .image-link-expand,
+.tf-essay-body .pencraft,
+.tf-essay-body .post-ufi,
+.tf-essay-body .like-button,
+.tf-essay-body .share-button,
+.tf-essay-body .comment-button,
+.tf-essay-body [class*=subscribe],
+.tf-essay-body [class*=button-wrapper] { display: none !important; }
+
+/* footer */
+.tf-essay-foot {
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+}
+.tf-essay-colophon { margin-bottom: 28px; }
+.tf-essay-colophon a {
+  color: var(--dim);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--faint);
+}
+.tf-essay-colophon a:hover { color: var(--ink); }
+
+/* prev/next sibling essays */
+.tf-essay-siblings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.tf-essay-sib {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-decoration: none;
+  color: var(--body);
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  transition: border-color .15s ease;
+}
+.tf-essay-sib:hover { border-color: var(--dim); }
+.tf-essay-sib-next { text-align: right; }
+.tf-essay-sib-label {
+  font-size: 10.5px;
+  color: var(--faint);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.tf-essay-sib-title {
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.tf-essay-sib-date {
+  font-size: 11px;
+  color: var(--dim);
+  font-variant-numeric: oldstyle-nums;
+}
+
+.tf-essay-endnav { display: flex; gap: 24px; margin-top: 8px; }
+.tf-essay-endnav a { color: var(--dim); text-decoration: none; }
+.tf-essay-endnav a:hover { color: var(--ink); }
+
+/* scroll progress bar — warm tint */
+body:has(main.tf) .scroll-progress {
+  background: linear-gradient(90deg, var(--faint), var(--dim));
+  height: 1.5px;
+}
+
+/* ==========================================================================
+   BOOKSHELF — compact grid of covers
+   ========================================================================== */
+/* ==========================================================================
+   BOOKSHELF — bibliographic register
+   ========================================================================== */
+
+/* spine strip: a visual fingerprint of the entire library */
+.tf-spines {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5px;
+  height: 28px;
+  padding: 0 32px;
+  max-width: 760px;
+  margin: 0 auto 36px;
+}
+.tf-spine {
+  display: block;
+  height: 100%;
+  background: var(--dim);
+  opacity: .22;
+  border-radius: 1px 1px 0 0;
+  transition: opacity .2s ease, height .2s ease;
+}
+.tf-spines:hover .tf-spine { opacity: .12; }
+.tf-spines:hover .tf-spine:hover { opacity: .6; height: 32px; }
+
+/* the register — dense bibliographic listing */
+.tf-register {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.tf-register-group {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 0 8px;
+  margin-bottom: 4px;
+  border-top: 1px solid var(--rule);
+  padding-top: 10px;
+}
+.tf-register-letter {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dim);
+  line-height: 1.6;
+  text-align: right;
+  padding-right: 4px;
+  font-variant-numeric: oldstyle-nums;
+}
+.tf-register-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tf-entry {
+  line-height: 1.65;
+  margin-bottom: 1px;
+}
+.tf-entry a {
+  text-decoration: none;
+  color: var(--body);
+  position: relative;
+  display: inline;
+  transition: color .15s ease;
+}
+.tf-entry a:hover {
+  color: var(--ink);
+}
+.tf-entry-title {
+  font-style: italic;
+  color: var(--ink);
+  font-size: 13.5px;
+}
+.tf-entry-dash {
+  color: var(--faint);
+  font-size: 12px;
+}
+.tf-entry-author {
+  font-size: 12.5px;
+  color: var(--dim);
+  font-variant: small-caps;
+  text-transform: lowercase;
+  letter-spacing: .3px;
+}
+.tf-entry-stars {
+  font-size: 9px;
+  color: #b8860b;
+  margin-left: 5px;
+  letter-spacing: .5px;
+  vertical-align: 1px;
+}
+.tf-entry-stars-empty { color: var(--rule); }
+
+/* hover cover reveal — floating image beside the entry */
+.tf-entry-cover {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  width: 90px;
+  pointer-events: none;
+  z-index: 10;
+  margin-bottom: 4px;
+}
+.tf-entry-cover img {
+  display: block;
+  width: 90px;
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.2);
+}
+.tf-entry a:hover .tf-entry-cover {
+  display: block;
+  animation: tfCoverIn .22s ease-out forwards;
+}
+@keyframes tfCoverIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   PHOTOGRAPHS — masonry grid
+   ========================================================================== */
+.tf-photos { max-width: 1000px; }
+.tf-gallery {
+  column-count: 3;
+  column-gap: 14px;
+  padding: 0 32px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+.tf-photo {
+  break-inside: avoid;
+  display: block;
+  width: 100%;
+  margin-bottom: 14px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.tf-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  transition: opacity .2s ease;
+}
+.tf-photo:hover img { opacity: .88; }
+
+@media (max-width: 768px) { .tf-gallery { column-count: 2; } }
+
+/* ==========================================================================
+   DARK MODE — via prefers-color-scheme
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  body:has(main.tf) { background: #141311; }
+  main.tf {
+    --ink: #e8e6e1;
+    --body: #c4c0b8;
+    --dim: #7a776f;
+    --faint: #55524b;
+    --rule: #2a2825;
+  }
+  main.tf ::selection { background: #3a3730; color: var(--ink); }
+  .tf a { color: var(--ink); text-decoration-color: var(--faint); }
+  .tf a:hover { text-decoration-color: var(--ink); }
+  .tf-essay-body > div > pre,
+  .tf-essay-body > div > code,
+  .tf-essay-body > div p > code {
+    background: #1e1d1a;
+  }
+  .tf-spine { background: var(--dim); }
+  .tf-entry-stars { color: #d4a537; }
+  .tf-entry-stars-empty { color: var(--faint); }
+  .tf-entry-cover img { box-shadow: 0 6px 24px rgba(0,0,0,.5); }
+}
+
+/* ==========================================================================
+   RESPONSIVE — collapse grid
+   ========================================================================== */
+@media (max-width: 960px) {
+  .tf-row, .tf-head { grid-template-columns: 110px minmax(0, 1fr); }
+  .tf-nav { grid-column: 2; flex-direction: row; flex-wrap: wrap; gap: 16px; margin-top: 14px; }
+  .tf-sn {
+    float: none;
+    display: block;
+    width: auto;
+    margin: 8px 0 8px 0;
+    padding-left: 12px;
+    border-left: 1px solid var(--rule);
+  }
+  .tf-sn::before { display: none; }
+  .tf-register { padding: 0; }
+  .tf-spines { padding: 0; }
+  .tf-gallery { padding: 0; }
+}
+
+@media (max-width: 600px) {
+  main.tf { padding: 48px 22px 64px; font-size: 15px; }
+  .tf-row, .tf-head { grid-template-columns: 1fr; row-gap: 4px; }
+  .tf-head > div, .tf-nav, .tf-body { grid-column: 1; }
+  .tf-head { margin-bottom: 48px; }
+  .tf-margin { text-align: left; }
+  .tf-row { margin-bottom: 34px; }
+  .tf-more { padding-left: 0; }
+  .tf-essay-title { font-size: 23px; }
+  .tf-essay-headline { grid-template-columns: 1fr; }
+  .tf-essay-dateline {
+    flex-direction: row;
+    gap: 8px;
+    text-align: left;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    padding-right: 0;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  .tf-essay-siblings { grid-template-columns: 1fr; }
+  .tf-register { padding: 0; }
+  .tf-register-group { grid-template-columns: 20px 1fr; }
+  .tf-spines { padding: 0; height: 20px; }
+  .tf-gallery { column-count: 2; column-gap: 10px; }
+}
