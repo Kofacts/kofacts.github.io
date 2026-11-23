@@ -24,15 +24,15 @@ export function SpineStrip({ books }: SpineStripProps) {
     if (!wrapRef.current) return;
     const wrapRect = wrapRef.current.getBoundingClientRect();
     const targetRect = targetEl.getBoundingClientRect();
-    
+
     // Center point of the bar relative to wrap container
     const rawX = targetRect.left - wrapRect.left + targetRect.width / 2;
-    
-    // Clamp so the tooltip stays within container boundaries
-    const minX = 90;
-    const maxX = Math.max(minX, wrapRect.width - 90);
+
+    // Clamp so the tooltip stays within container boundaries on small screens
+    const minX = 70;
+    const maxX = Math.max(minX, wrapRect.width - 70);
     const clampedX = Math.max(minX, Math.min(maxX, rawX));
-    
+
     setTooltipX(clampedX);
     setActiveBook(book);
   }, []);
@@ -52,6 +52,31 @@ export function SpineStrip({ books }: SpineStripProps) {
     setTimeout(() => {
       el.classList.remove('tf-entry-pulse');
     }, 2000);
+  };
+
+  // Touch scrubbing on mobile: drag across spines to preview, release to jump
+  const handleTouch = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const button = el?.closest<HTMLButtonElement>('.tf-spine');
+    if (button) {
+      const domId = button.id.replace('spine-', '');
+      const book = books.find((b) => b.domId === domId);
+      if (book) {
+        updateTooltipPosition(button, book);
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (activeBook) {
+      handleJump(activeBook.domId);
+      setTimeout(() => {
+        setActiveBook(null);
+      }, 1500);
+    }
   };
 
   // Bi-directional link: hovering a book in the register highlights its spine
@@ -94,6 +119,9 @@ export function SpineStrip({ books }: SpineStripProps) {
         isHoveringSpines.current = false;
         setActiveBook(null);
       }}
+      onTouchStart={handleTouch}
+      onTouchMove={handleTouch}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Floating tooltip */}
       {activeBook && (
@@ -128,8 +156,8 @@ export function SpineStrip({ books }: SpineStripProps) {
             type="button"
             className={`tf-spine ${activeBook?.domId === b.domId ? 'is-active' : ''}`}
             style={{
-              width: `${Math.max(3, Math.min(8, (b.title.length % 6) + 3))}px`,
-            }}
+              '--spine-w': `${Math.max(3, Math.min(8, (b.title.length % 6) + 3))}px`,
+            } as React.CSSProperties}
             title={`${b.title} by ${b.author} (click to jump)`}
             aria-label={`${b.title} by ${b.author}. Click to jump to catalog entry.`}
             onClick={() => handleJump(b.domId)}
