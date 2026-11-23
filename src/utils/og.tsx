@@ -22,16 +22,16 @@ const TOTAL_PAGES = '007';
 
 /* ── font loading (cached at module level) ─────────────────── */
 let fontRegular: ArrayBuffer | null = null;
-let fontMedium: ArrayBuffer | null = null;
+let fontBold: ArrayBuffer | null = null;
 
 function loadFonts() {
   if (!fontRegular) {
-    fontRegular = readFileSync(join(process.cwd(), 'src/fonts/Inter-Regular.woff')).buffer as ArrayBuffer;
+    fontRegular = readFileSync(join(process.cwd(), 'src/fonts/Georgia.ttf')).buffer as ArrayBuffer;
   }
-  if (!fontMedium) {
-    fontMedium = readFileSync(join(process.cwd(), 'src/fonts/Inter-Medium.woff')).buffer as ArrayBuffer;
+  if (!fontBold) {
+    fontBold = readFileSync(join(process.cwd(), 'src/fonts/Georgia-Bold.ttf')).buffer as ArrayBuffer;
   }
-  return { regular: fontRegular, medium: fontMedium };
+  return { regular: fontRegular, bold: fontBold };
 }
 
 /* ── card renderer ─────────────────────────────────────────── */
@@ -43,13 +43,13 @@ interface CardOptions {
 }
 
 export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
-  const { regular, medium } = loadFonts();
+  const { regular, bold } = loadFonts();
   const meta = OG_PAGES[page];
   const displayUrl = url || 'obodugo.online';
 
   // For long titles, reduce font size
   const titleLen = title.length;
-  const titleSize = titleLen > 80 ? 28 : titleLen > 50 ? 34 : titleLen > 30 ? 40 : 46;
+  const titleSize = titleLen > 80 ? 28 : titleLen > 50 ? 34 : titleLen > 30 ? 40 : 48;
 
   return new ImageResponse(
     (
@@ -58,7 +58,7 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
           width: '100%',
           height: '100%',
           display: 'flex',
-          padding: '20px',
+          padding: '24px',
           backgroundColor: '#0a0a09',
         }}
       >
@@ -70,8 +70,8 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            border: '1px solid rgba(196, 192, 184, 0.13)',
-            padding: '36px 44px',
+            border: '1px solid rgba(196, 192, 184, 0.14)',
+            padding: '38px 46px',
           }}
         >
           {/* ── top row: glyph + code ... label ── */}
@@ -86,9 +86,8 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
               <span
                 style={{
-                  fontSize: '20px',
-                  color: '#5a5750',
-                  fontFamily: 'Inter',
+                  fontSize: '22px',
+                  color: '#6e6a62',
                   lineHeight: 1,
                 }}
               >
@@ -97,8 +96,8 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
               <span
                 style={{
                   fontSize: '13px',
-                  color: '#4a4740',
-                  fontFamily: 'Inter',
+                  color: '#55524b',
+                  fontFamily: 'Georgia',
                   letterSpacing: '0.08em',
                 }}
               >
@@ -108,9 +107,9 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
             <span
               style={{
                 fontSize: '11px',
-                color: '#4a4740',
-                fontFamily: 'Inter',
-                letterSpacing: '0.2em',
+                color: '#55524b',
+                fontFamily: 'Georgia',
+                letterSpacing: '0.22em',
                 textTransform: 'uppercase' as const,
               }}
             >
@@ -126,19 +125,19 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
               alignItems: 'center',
               justifyContent: 'center',
               flex: 1,
-              gap: '12px',
-              padding: '0 40px',
+              gap: '14px',
+              padding: '0 30px',
             }}
           >
             <span
               style={{
                 fontSize: `${titleSize}px`,
-                color: '#d4d0c8',
-                fontFamily: 'InterMedium',
+                color: '#dcd8ce',
+                fontFamily: 'GeorgiaBold',
                 textAlign: 'center',
-                lineHeight: 1.3,
-                letterSpacing: titleSize >= 40 ? '0.06em' : '0.02em',
-                maxWidth: '900px',
+                lineHeight: 1.25,
+                letterSpacing: '-0.01em',
+                maxWidth: '920px',
               }}
             >
               {title}
@@ -146,12 +145,14 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
             {subtitle && (
               <span
                 style={{
-                  fontSize: '15px',
-                  color: '#6a665e',
-                  fontFamily: 'Inter',
+                  fontSize: '16px',
+                  color: '#7a766e',
+                  fontFamily: 'Georgia',
+                  fontStyle: 'italic',
                   textAlign: 'center',
-                  letterSpacing: '0.03em',
-                  maxWidth: '700px',
+                  letterSpacing: '0.02em',
+                  maxWidth: '750px',
+                  lineHeight: 1.4,
                 }}
               >
                 {subtitle}
@@ -171,9 +172,9 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
             <span
               style={{
                 fontSize: '11px',
-                color: '#3a3730',
-                fontFamily: 'Inter',
-                letterSpacing: '0.12em',
+                color: '#44413b',
+                fontFamily: 'Georgia',
+                letterSpacing: '0.14em',
               }}
             >
               RO · {meta.code}/{TOTAL_PAGES} · MMXXVI
@@ -181,9 +182,9 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
             <span
               style={{
                 fontSize: '11px',
-                color: '#3a3730',
-                fontFamily: 'Inter',
-                letterSpacing: '0.06em',
+                color: '#44413b',
+                fontFamily: 'Georgia',
+                letterSpacing: '0.08em',
               }}
             >
               {displayUrl}
@@ -195,8 +196,8 @@ export function generateOGCard({ page, title, subtitle, url }: CardOptions) {
     {
       ...SIZE,
       fonts: [
-        { name: 'Inter', data: regular, style: 'normal' as const, weight: 400 as const },
-        { name: 'InterMedium', data: medium, style: 'normal' as const, weight: 500 as const },
+        { name: 'Georgia', data: regular, style: 'normal' as const, weight: 400 as const },
+        { name: 'GeorgiaBold', data: bold, style: 'normal' as const, weight: 700 as const },
       ],
     },
   );
