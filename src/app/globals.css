@@ -1640,26 +1640,126 @@ body:has(main.tf) .scroll-progress {
    BOOKSHELF — bibliographic register
    ========================================================================== */
 
-/* spine strip: a visual fingerprint of the entire library */
+/* spine strip: an interactive visual fingerprint of the entire library */
+.tf-spines-wrap {
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto 36px;
+  padding: 0 32px;
+}
 .tf-spines {
   display: flex;
   align-items: flex-end;
   gap: 1.5px;
   height: 28px;
-  padding: 0 32px;
-  max-width: 760px;
-  margin: 0 auto 36px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 .tf-spine {
   display: block;
   height: 100%;
   background: var(--dim);
-  opacity: .22;
+  opacity: .25;
   border-radius: 1px 1px 0 0;
-  transition: opacity .2s ease, height .2s ease;
+  transition: opacity .15s ease, height .15s ease, background-color .15s ease;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
 }
 .tf-spines:hover .tf-spine { opacity: .12; }
-.tf-spines:hover .tf-spine:hover { opacity: .6; height: 32px; }
+.tf-spines:hover .tf-spine:hover,
+.tf-spines:hover .tf-spine.is-active,
+.tf-spine.is-reverse-active {
+  opacity: .95;
+  height: 34px;
+  background: var(--ink);
+}
+
+/* spine tooltip */
+.tf-spine-tooltip {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #f5f3ee;
+  padding: 5px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: 0 4px 16px rgba(0,0,0,.22);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: tfTooltipIn .15s ease-out;
+}
+.tf-spine-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--ink);
+}
+@keyframes tfTooltipIn {
+  from { opacity: 0; transform: translate(-50%, 3px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+.tf-spine-tt-letter {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 11px;
+  opacity: .65;
+  border-right: 1px solid rgba(255,255,255,.25);
+  padding-right: 6px;
+}
+.tf-spine-tt-title {
+  font-style: italic;
+  font-family: var(--serif);
+}
+.tf-spine-tt-dash {
+  opacity: .4;
+  font-size: 11px;
+}
+.tf-spine-tt-author {
+  font-variant: small-caps;
+  text-transform: lowercase;
+  letter-spacing: .3px;
+  opacity: .9;
+  font-size: 11.5px;
+}
+.tf-spine-tt-stars {
+  color: #e5b84c;
+  font-size: 9.5px;
+  letter-spacing: .5px;
+  margin-left: 2px;
+}
+
+/* target pulse on jumped book entry */
+@keyframes tfEntryPulse {
+  0% {
+    background-color: rgba(184, 134, 11, 0.32);
+    transform: translateX(5px);
+  }
+  30% {
+    background-color: rgba(184, 134, 11, 0.22);
+  }
+  100% {
+    background-color: transparent;
+    transform: translateX(0);
+  }
+}
+.tf-entry.tf-entry-pulse {
+  animation: tfEntryPulse 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  border-radius: 3px;
+}
 
 /* the register — dense bibliographic listing */
 .tf-register {
@@ -1809,6 +1909,28 @@ body:has(main.tf) .scroll-progress {
     background: #1e1d1a;
   }
   .tf-spine { background: var(--dim); }
+  .tf-spine-tooltip {
+    background: #252320;
+    color: #e8e6e1;
+    border: 1px solid #3a3730;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  }
+  .tf-spine-tooltip::after {
+    border-top-color: #252320;
+  }
+  @keyframes tfEntryPulse {
+    0% {
+      background-color: rgba(212, 165, 55, 0.38);
+      transform: translateX(5px);
+    }
+    30% {
+      background-color: rgba(212, 165, 55, 0.22);
+    }
+    100% {
+      background-color: transparent;
+      transform: translateX(0);
+    }
+  }
   .tf-entry-stars { color: #d4a537; }
   .tf-entry-stars-empty { color: var(--faint); }
   .tf-entry-cover img { box-shadow: 0 6px 24px rgba(0,0,0,.5); }
@@ -1830,6 +1952,7 @@ body:has(main.tf) .scroll-progress {
   }
   .tf-sn::before { display: none; }
   .tf-register { padding: 0; }
+  .tf-spines-wrap { padding: 0; }
   .tf-spines { padding: 0; }
   .tf-gallery { padding: 0; }
 }
@@ -1857,6 +1980,14 @@ body:has(main.tf) .scroll-progress {
   .tf-essay-siblings { grid-template-columns: 1fr; }
   .tf-register { padding: 0; }
   .tf-register-group { grid-template-columns: 20px 1fr; }
-  .tf-spines { padding: 0; height: 20px; }
+  .tf-spines-wrap { padding: 0; margin-bottom: 24px; }
+  .tf-spines { padding: 0; height: 22px; }
+  .tf-spine-tooltip {
+    font-size: 11px;
+    padding: 4px 8px;
+    max-width: 90vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .tf-gallery { column-count: 2; column-gap: 10px; }
 }

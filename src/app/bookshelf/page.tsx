@@ -1,5 +1,6 @@
 import { fetchGoodreadsReadBooks } from '@/utils/goodreads';
 import { TfHeader, TfFooter } from '@/components/TfShell';
+import { SpineStrip, type SpineBook } from '@/components/SpineStrip';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -29,6 +30,29 @@ export default async function BookshelfPage() {
   }
   const sortedLetters = [...grouped.keys()].sort();
 
+  // Build sequential catalog IDs and flatten spines in the exact A-Z register order
+  let counter = 0;
+  const spineBooks: SpineBook[] = [];
+  const letterEntries = new Map<string, { book: typeof books[0]; domId: string }[]>();
+
+  for (const letter of sortedLetters) {
+    const list = grouped.get(letter)!;
+    const items = list.map((b) => {
+      counter++;
+      const safeKey = (b.id || b.title).replace(/[^\w-]/g, '').slice(0, 20);
+      const domId = `bk-${counter}-${safeKey}`;
+      spineBooks.push({
+        domId,
+        title: b.title,
+        author: b.author,
+        rating: b.rating,
+        letter,
+      });
+      return { book: b, domId };
+    });
+    letterEntries.set(letter, items);
+  }
+
   return (
     <main className="tf">
       <TfHeader
@@ -44,18 +68,8 @@ export default async function BookshelfPage() {
         }
       />
 
-      {/* ---- spine strip — a visual fingerprint of the library ---- */}
-      <div className="tf-spines" aria-hidden="true">
-        {books.map((book, i) => (
-          <span
-            key={book.id || i}
-            className="tf-spine"
-            style={{
-              width: `${Math.max(3, Math.min(8, (book.title.length % 6) + 3))}px`,
-            }}
-          />
-        ))}
-      </div>
+      {/* ---- interactive spine strip: scrub or click any spine to jump ---- */}
+      <SpineStrip books={spineBooks} />
 
       {/* ---- register entries, grouped by author surname letter ---- */}
       <section className="tf-register">
@@ -63,8 +77,13 @@ export default async function BookshelfPage() {
           <div key={letter} className="tf-register-group">
             <span className="tf-register-letter">{letter}</span>
             <ol className="tf-register-list">
-              {grouped.get(letter)!.map((book) => (
-                <li key={book.id || book.title} className="tf-entry">
+              {letterEntries.get(letter)!.map(({ book, domId }) => (
+                <li
+                  key={domId}
+                  id={domId}
+                  className="tf-entry"
+                  data-spine-id={`spine-${domId}`}
+                >
                   <a
                     href={book.link}
                     target="_blank"
